@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="@drawable/event_item_card"
+    android:clickable="true"
+    android:focusable="true"
+    android:elevation="2dp"
+    android:translationZ="2dp">
+
+    <!-- Título con mejor estilo -->
+    <TextView
+        android:id="@+id/event_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#2C3E50"
+        android:text="Título del evento"
+        android:drawablePadding="8dp" />
+
+    <!-- Fecha con icono -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/event_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:textColor="#7F8C8D"
+            android:text="Fecha del evento"
+            android:drawablePadding="4dp" />
+
+    </LinearLayout>
+
+    <!-- Línea divisoria elegante -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/gradient_divider"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Descripción con mejor formato -->
+    <TextView
+        android:id="@+id/event_short_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="#34495E"
+        android:text="Descripción corta del evento histórico que aparece en la lista"
+        android:lineSpacingExtra="2dp"
+        android:maxLines="2"
+        android:ellipsize="end" />
+
+</LinearLayout>

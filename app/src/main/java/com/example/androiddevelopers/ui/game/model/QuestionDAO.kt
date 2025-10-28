@@ -5,8 +5,7 @@ import androidx.room.Query
 
 @Dao
 interface QuestionDao {
-
-    // Gets a single random question from the table
-    @Query("SELECT * FROM questions ORDER BY RANDOM() LIMIT 1")
-    suspend fun getRandomQuestion(): Question?
+    // Gets a single random question from a specific category
+    @Query("SELECT * FROM questions WHERE category = :category ORDER BY RANDOM() LIMIT 1")
+    suspend fun getRandomQuestion(category: String): Question?
 }

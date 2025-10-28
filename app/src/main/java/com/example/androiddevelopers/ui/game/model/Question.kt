@@ -9,6 +9,9 @@ data class Question(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
 
+    @ColumnInfo(name = "category")
+    val category: String,
+
     @ColumnInfo(name = "question_text")
     val questionText: String,
 

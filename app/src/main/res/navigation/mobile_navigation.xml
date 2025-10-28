@@ -12,28 +12,6 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_events"
-        android:name="com.example.androiddevelopers.ui.events.EventsFragment"
-        android:label="@string/title_events"
-        tools:layout="@layout/fragment_events" >
-
-        <action
-            android:id="@+id/action_navigation_events_to_eventDetailFragment"
-            app:destination="@id/eventDetailFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/eventDetailFragment"
-        android:name="com.example.androiddevelopers.ui.events.EventDetailFragment"
-        android:label="Detalles del Evento"
-        tools:layout="@layout/fragment_event_detail">
-
-        <argument
-            android:name="eventId"
-            app:argType="integer" />
-    </fragment>
-
-    <fragment
         android:id="@+id/navigation_game"
         android:name="com.example.androiddevelopers.ui.game.GameFragment"
         android:label="@string/title_game"
@@ -43,4 +21,27 @@
         android:name="com.example.androiddevelopers.ui.settings.SettingsFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_settings" />
+    <navigation android:id="@+id/nested_events"
+        app:startDestination="@id/navigation_events">
+        <fragment
+            android:id="@+id/navigation_events"
+            android:name="com.example.androiddevelopers.ui.events.EventsFragment"
+            android:label="@string/title_events"
+            tools:layout="@layout/fragment_events">
+
+            <action
+                android:id="@+id/action_navigation_events_to_eventDetailFragment"
+                app:destination="@id/eventDetailFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/eventDetailFragment"
+            android:name="com.example.androiddevelopers.ui.events.EventDetailFragment"
+            android:label="Detalles del Evento"
+            tools:layout="@layout/fragment_event_detail">
+
+            <argument
+                android:name="eventId"
+                app:argType="integer" />
+        </fragment>
+    </navigation>
 </navigation>

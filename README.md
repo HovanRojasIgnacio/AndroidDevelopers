@@ -9,7 +9,7 @@ Aplicación móvil de temática histórica que combina efemérides diarias y jue
 |---------|----|
 | Ignacio Hovan Rojas | 295341 |
 | Pablo José Pérez Díez | 282440 |
-| Juan | xxxxxx |
+| Juan Fernández López | 296143 |
 
 ---
 # 📜 Descripción del proyecto

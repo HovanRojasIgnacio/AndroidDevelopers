@@ -65,7 +65,6 @@ class GameFragment : Fragment(R.layout.fragment_game) {
                 } else {
                     // If no game is active, let the default back action happen
                     isEnabled = false
-                    requireActivity().onBackPressed()
                 }
             }
         })

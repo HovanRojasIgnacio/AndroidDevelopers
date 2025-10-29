@@ -1,19 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.home.HomeFragment">
+    android:clipToPadding="false"
+    android:paddingTop="?attr/actionBarSize"
+    android:paddingBottom="16dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp">
 
-    <TextView
-        android:id="@+id/text_home"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:orientation="vertical">
+
+        <!-- Imagen: bajada con margen superior -->
+        <ImageView
+            android:id="@+id/imgFeatured"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:layout_marginTop="24dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/babilonia"
+            android:contentDescription="@string/app_name" />
+
+        <!-- Fecha “Un día como hoy …” -->
+        <TextView
+            android:id="@+id/txtDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:background="@android:color/darker_gray"
+            android:textColor="@android:color/white" />
+
+        <!-- Título vistoso -->
+        <TextView
+            android:id="@+id/txtTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textStyle="bold"
+            android:textSize="22sp"
+            android:lineSpacingExtra="2dp" />
+
+        <!-- Subtítulo corto -->
+        <TextView
+            android:id="@+id/txtSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray" />
+
+        <!-- Texto extenso (explicación/noticia) -->
+        <TextView
+            android:id="@+id/txtBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:textSize="16sp"
+            android:lineSpacingExtra="4dp" />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

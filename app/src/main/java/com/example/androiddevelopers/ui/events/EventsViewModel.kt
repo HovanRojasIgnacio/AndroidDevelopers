@@ -1,6 +1,7 @@
 package com.example.androiddevelopers.ui.events
 
 import androidx.lifecycle.ViewModel
+import com.example.androiddevelopers.R
 
 class EventsViewModel : ViewModel() {
 

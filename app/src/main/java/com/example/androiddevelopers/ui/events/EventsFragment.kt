@@ -13,40 +13,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class EventsFragment : Fragment(R.layout.fragment_events) {
-    /*
-    private val viewModel: EventsViewModel by viewModels()
-    private lateinit var recyclerView: RecyclerView
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        setupRecyclerView(view)
-        setupAdapter()
-    }
-
-    private fun setupRecyclerView(view: View) {
-        recyclerView = view.findViewById(R.id.events_recycler_view)
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-    }
-
-    private fun setupAdapter() {
-        val adapter = HistoricEventAdapter()
-        adapter.events = viewModel.events
-        adapter.onItemClick = { event ->
-            navigateToEventDetail(event.id)
-        }
-        recyclerView.adapter = adapter
-    }
-
-    private fun navigateToEventDetail(eventId: Int) {
-
-        val bundle = Bundle().apply {
-            putInt("eventId", eventId)
-        }
-        findNavController().navigate(R.id.eventDetailFragment, bundle)
-    }
-
-     */
 
     private val viewModel: EventsViewModel by viewModels()
     private lateinit var recyclerView: RecyclerView
@@ -80,8 +47,6 @@ class EventsFragment : Fragment(R.layout.fragment_events) {
                 adapter.notifyDataSetChanged()
             }
         }
-
-        // También puedes observar isLoading y error para mostrar estados de carga/error
     }
 
     private fun navigateToEventDetail(eventId: Int) {

@@ -21,7 +21,7 @@ class HistoricalEventsRepository {
                 val events = wikipediaEvents.mapIndexed { index, wikipediaEvent ->
                     HistoricEvent(
                         id = index + 1,
-                        title = wikipediaEvent.pages.firstOrNull()?.title ?: "Evento Histórico",
+                        title = wikipediaEvent.pages.firstOrNull()?.title?.replace("_", " ") ?: "Evento Histórico",
                         date = wikipediaEvent.year,
                         shortDescription = wikipediaEvent.text,
                         detailedDescription = buildDetailedDescription(wikipediaEvent),

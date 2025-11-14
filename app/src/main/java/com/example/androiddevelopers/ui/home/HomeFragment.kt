@@ -2,36 +2,91 @@ package com.example.androiddevelopers.ui.home
 
 import android.os.Bundle
 import android.view.View
+import androidx.compose.ui.text.intl.Locale
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.example.androiddevelopers.R
 import com.example.androiddevelopers.databinding.FragmentHomeBinding
 import com.example.androiddevelopers.ui.events.EventsViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.*
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: EventsViewModel by viewModels()
+    private val viewModel: EventsViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentHomeBinding.bind(view)
 
-        val featured = viewModel.getEventById(1)
+        setupUI()
+        observeEvents()
+    }
 
-        if (featured != null) {
-            binding.txtTitle.text = featured.title
+    private fun setupUI() {
+        binding.txtDate.text = getCurrentDateSimple()
+    }
+
+    private fun observeEvents() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.events.collectLatest { events ->
+                if (events.isNotEmpty()) {
+                    val featuredEvent = events.first()
+                    displayFeaturedEvent(featuredEvent)
+                } else {
+                    displayEmptyState()
+                }
+            }
         }
-        if (featured != null) {
-            binding.txtSubtitle.text = "${featured.date} — ${featured.shortDescription}"
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.isLoading.collect { isLoading ->
+                if (isLoading) {
+                    showLoadingState()
+                }
+            }
         }
+    }
 
-        val descripcion:String = "La caída de Babilonia culminó el avance del Imperio aqueménida bajo Ciro II, “el Grande”. Según las crónicas babilónicas y fuentes griegas, el ejército persa derrotó previamente a Nabónido y, tras desviar el curso del río Éufrates, penetró en la ciudad prácticamente sin resistencia significativa. La toma de Babilonia puso fin al Imperio neobabilónico y abrió una nueva etapa para la región de Mesopotamia. El cambio de poder tuvo profundas consecuencias políticas y religiosas. Ciro proclamó edictos de tolerancia, reorganizó la administración imperial y permitió el regreso de poblaciones deportadas por los babilonios, entre ellas comunidades judías exiliadas. Este gesto, atestiguado en el llamado “Cilindro de Ciro” y en tradiciones posteriores, consolidó su fama de monarca pragmático y benevolente, capaz de integrar diversos pueblos dentro de una estructura imperial amplia.Babilonia, célebre por su urbanismo, murallas y templos, conservó relevancia como centro administrativo y cultural bajo dominio persa. La transición marcó el comienzo de una era en la que el Imperio aqueménida se convirtió en la mayor potencia del Próximo Oriente, con una administración eficiente, red de caminos y una política de respeto relativo a las tradiciones locales. La fecha se recuerda como un hito que reconfiguró el equilibrio político de la Antigüedad y anticipó prácticas de gobierno que influirían en imperios posteriores"
-        binding.txtBody.text = descripcion
+    private fun displayFeaturedEvent(event: com.example.androiddevelopers.ui.events.HistoricEvent) {
+        binding.txtTitle.text = event.title
+        binding.txtSubtitle.text = "${event.date} — ${event.shortDescription}"
 
-        binding.txtDate.text="29 de octubre"
+
+        binding.txtBody.text = event.detailedDescription
+    }
+
+    private fun displayEmptyState() {
+        binding.txtTitle.text = "No hay eventos destacados"
+        binding.txtSubtitle.text = "Consulta la sección de efemérides"
+        binding.txtBody.text = "No se han podido cargar los eventos históricos para hoy."
+    }
+
+    private fun showLoadingState() {
+        binding.txtTitle.text = "Cargando..."
+        binding.txtSubtitle.text = "Obteniendo eventos históricos"
+        binding.txtBody.text = ""
+    }
+
+    private fun getCurrentDateSimple(): String {
+        val calendar = Calendar.getInstance()
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val month = calendar.get(Calendar.MONTH)
+
+        val monthNames = arrayOf(
+            "enero", "febrero", "marzo", "abril", "mayo", "junio",
+            "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+        )
+
+        return "$day de ${monthNames[month]}"
     }
 
     override fun onDestroyView() {

@@ -3,6 +3,7 @@ package com.example.androiddevelopers.ui.events
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -15,7 +16,7 @@ import kotlinx.coroutines.launch
 class EventsFragment : Fragment(R.layout.fragment_events) {
 
 
-    private val viewModel: EventsViewModel by viewModels()
+    private val viewModel: EventsViewModel by activityViewModels()
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: HistoricEventAdapter
 

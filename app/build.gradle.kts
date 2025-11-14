@@ -59,6 +59,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.2")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.2")
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation(libs.androidx.ui.text)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

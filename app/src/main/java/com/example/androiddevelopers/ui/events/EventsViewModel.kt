@@ -30,15 +30,13 @@ class EventsViewModel : ViewModel() {
 
         viewModelScope.launch {
             val result = repository.getTodayHistoricalEvents()
-            result.fold(
-                onSuccess = { events ->
-                    _events.value = events
-                },
-                onFailure = { error ->
-                    _error.value = "Error al cargar eventos: ${error.message}"
-                    _events.value = getDefaultEvents()
-                }
-            )
+
+            if (result.isSuccess) {
+                _events.value = result.getOrNull() ?: emptyList()
+            } else {
+                _error.value = "Error al cargar eventos: ${result.exceptionOrNull()?.message}"
+                _events.value = getDefaultEvents()
+            }
             _isLoading.value = false
         }
     }

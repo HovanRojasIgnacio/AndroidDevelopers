@@ -28,7 +28,12 @@ class HistoricalEventsRepository {
                         imageUrl = wikipediaEvent.pages.firstOrNull()?.thumbnail?.source
                     )
                 }
-                Result.success(events)
+
+                if (events.isNotEmpty()) {
+                    Result.success(events)
+                } else {
+                    Result.success(getDefaultEvents())
+                }
             } else {
                 //si falla se usan los hardcodeados
                 Result.success(getDefaultEvents())

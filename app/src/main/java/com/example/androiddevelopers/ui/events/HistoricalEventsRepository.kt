@@ -1,5 +1,6 @@
 package com.example.androiddevelopers.ui.events
 
+import android.util.Log
 import java.util.Calendar
 import com.example.androiddevelopers.ui.events.Apis
 import com.example.androiddevelopers.ui.events.HistoricEvent
@@ -19,13 +20,17 @@ class HistoricalEventsRepository {
                 val wikipediaEvents = response.body()?.events ?: emptyList()
 
                 val events = wikipediaEvents.mapIndexed { index, wikipediaEvent ->
+                    val pageWithImage = wikipediaEvent.pages.firstOrNull { it.thumbnail != null || it.originalimage != null }
+                    val imageUrl = pageWithImage?.originalimage?.source ?: pageWithImage?.thumbnail?.source
+                    Log.d("HistoricalEventsRepo", "Event: ${wikipediaEvent.text}, Image URL: $imageUrl")
+
                     HistoricEvent(
                         id = index + 1,
-                        title = wikipediaEvent.pages.firstOrNull()?.title?.replace("_", " ") ?: "Evento Histórico",
+                        title = pageWithImage?.title?.replace("_", " ") ?: "Evento Histórico",
                         date = wikipediaEvent.year,
                         shortDescription = wikipediaEvent.text,
                         detailedDescription = buildDetailedDescription(wikipediaEvent),
-                        imageUrl = wikipediaEvent.pages.firstOrNull()?.thumbnail?.source
+                        imageUrl = imageUrl
                     )
                 }
 

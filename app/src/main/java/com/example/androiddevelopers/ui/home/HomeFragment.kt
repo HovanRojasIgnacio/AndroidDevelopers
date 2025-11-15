@@ -2,18 +2,14 @@ package com.example.androiddevelopers.ui.home
 
 import android.os.Bundle
 import android.view.View
-import androidx.compose.ui.text.intl.Locale
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.androiddevelopers.R
 import com.example.androiddevelopers.databinding.FragmentHomeBinding
 import com.example.androiddevelopers.ui.events.EventsViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.*
 
 class HomeFragment : Fragment(R.layout.fragment_home) {

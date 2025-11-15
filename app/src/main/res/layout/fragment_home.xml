@@ -8,6 +8,7 @@
     android:paddingTop="?attr/actionBarSize"
     android:paddingBottom="16dp"
     android:paddingStart="16dp"
+    android:fitsSystemWindows="true"
     android:paddingEnd="16dp">
 
     <LinearLayout

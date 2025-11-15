@@ -2,12 +2,15 @@ package com.example.androiddevelopers.ui.home
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import coil.load
 import com.example.androiddevelopers.R
 import com.example.androiddevelopers.databinding.FragmentHomeBinding
 import com.example.androiddevelopers.ui.events.EventsViewModel
+import com.example.androiddevelopers.ui.events.HistoricEvent
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.*
@@ -45,31 +48,43 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.isLoading.collect { isLoading ->
-                if (isLoading) {
+                if (isLoading && viewModel.events.value.isEmpty()) {
                     showLoadingState()
                 }
             }
         }
     }
 
-    private fun displayFeaturedEvent(event: com.example.androiddevelopers.ui.events.HistoricEvent) {
+    private fun displayFeaturedEvent(event: HistoricEvent) {
         binding.txtTitle.text = event.title
         binding.txtSubtitle.text = "${event.date} — ${event.shortDescription}"
-
-
         binding.txtBody.text = event.detailedDescription
+
+        val imageUrl = event.imageUrl?.trim()
+        if (!imageUrl.isNullOrEmpty()) {
+            binding.imgFeatured.isVisible = true
+            binding.imgFeatured.load(imageUrl) {
+                crossfade(true)
+                placeholder(android.R.drawable.ic_menu_gallery)
+                error(android.R.drawable.ic_menu_report_image)
+            }
+        } else {
+            binding.imgFeatured.isVisible = false
+        }
     }
 
     private fun displayEmptyState() {
         binding.txtTitle.text = "No hay eventos destacados"
         binding.txtSubtitle.text = "Consulta la sección de efemérides"
         binding.txtBody.text = "No se han podido cargar los eventos históricos para hoy."
+        binding.imgFeatured.isVisible = false
     }
 
     private fun showLoadingState() {
         binding.txtTitle.text = "Cargando..."
         binding.txtSubtitle.text = "Obteniendo eventos históricos"
         binding.txtBody.text = ""
+        binding.imgFeatured.isVisible = false
     }
 
     private fun getCurrentDateSimple(): String {

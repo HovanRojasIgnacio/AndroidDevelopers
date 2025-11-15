@@ -9,6 +9,7 @@
     android:orientation="vertical"
     android:padding="20dp"
     android:background="@drawable/event_item_card"
+    android:fitsSystemWindows="true"
     android:clickable="true"
     android:focusable="true"
     android:elevation="2dp"

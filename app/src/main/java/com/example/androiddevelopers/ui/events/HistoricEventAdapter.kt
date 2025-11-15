@@ -7,15 +7,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.androiddevelopers.R
 
-
 data class HistoricEvent(
     val id: Int,
     val title: String,
     val date: String,
     val shortDescription: String,
     val detailedDescription: String,
-    )
-
+    val imageUrl: String? = null //campo opcional para las imágenes
+)
 
 class HistoricEventAdapter : RecyclerView.Adapter<HistoricEventAdapter.EventViewHolder>() {
 

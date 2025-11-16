@@ -32,6 +32,15 @@
             android:textSize="16sp"
             android:textColor="#666666"
             android:layout_marginBottom="16dp" />
+            
+        <!-- Imagen del evento -->
+        <ImageView
+            android:id="@+id/detail_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:minHeight="200dp"
+            android:scaleType="centerCrop" />
 
         <!-- Línea divisoria -->
         <View

@@ -20,6 +20,7 @@ data class WikipediaPage(
     val title: String,
     @SerialName("content_urls") val contentUrls: WikipediaUrls? = null,
     val thumbnail: WikipediaThumbnail? = null,
+    val originalimage: WikipediaThumbnail? = null,
     val extract: String? = null
 )
 

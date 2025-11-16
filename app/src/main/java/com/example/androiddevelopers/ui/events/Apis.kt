@@ -19,7 +19,7 @@ object Apis {
         interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS)
     }
 
-    private val client = OkHttpClient.Builder()
+    val client = OkHttpClient.Builder()
         .addInterceptor(interceptorLog)
         .addInterceptor { chain ->
             val originalRequest = chain.request()
@@ -37,7 +37,7 @@ object Apis {
 
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://es.wikipedia.org/")
-        .client(client)
+        .client(client) // This correctly uses your client
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 

@@ -5,6 +5,25 @@
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
+    <color name="dark_primary">#FF1F4E67</color>
+    <color name="dark_primary_variant">#FF0C2E41</color>
+    <color name="accent_secondary">#FF00BCD4</color>
+    <color name="accent_secondary_variant">#FF008496</color>
+    <color name="grey_background">#FFF5F5F5</color>
+    <color name="app_bar_primary">#FFFFFFFF</color>
+    <color name="status_bar_variant">#FFEEEEEE</color>
+    <color name="dark_grey_primary">#FF212121</color>
+    <color name="dark_grey_variant">#FF121212</color>
+    <color name="accent_green">#FF009688</color>
+    <color name="accent_green_variant">#FF00796B</color>
+    <color name="nav_icon_inactive">#B3FFFFFF</color>
+    <color name="primary_deep_blue">#FF0D47A1</color>
+    <color name="primary_darker">#FF002171</color>
+    <color name="text_on_primary">#FFFFFFFF</color>
+    <color name="accent_gold">#FFFFC107</color>
+    <color name="accent_darker">#FFFF8F00</color>
+    <color name="text_on_secondary">#FF000000</color> <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="light_background">#FFF5F5F5</color>
+
 </resources>

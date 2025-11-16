@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AndroidDevelopers</string>
+    <string name="app_name">HistoDay</string>
     <string name="title_home">Home</string>
     <string name="title_events">Events</string>
     <string name="title_game">Game</string>

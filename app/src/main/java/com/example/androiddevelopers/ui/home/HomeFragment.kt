@@ -13,7 +13,7 @@ import com.example.androiddevelopers.ui.events.EventsViewModel
 import com.example.androiddevelopers.ui.events.HistoricEvent
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Calendar
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
@@ -56,8 +56,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private fun displayFeaturedEvent(event: HistoricEvent) {
+        binding.txtYear.text = event.date
         binding.txtTitle.text = event.title
-        binding.txtSubtitle.text = "${event.date} — ${event.shortDescription}"
+        binding.txtSubtitle.text = "${event.shortDescription}"
         binding.txtBody.text = event.detailedDescription
 
         val imageUrl = event.imageUrl?.trim()
@@ -76,7 +77,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private fun displayEmptyState() {
         binding.txtTitle.text = "No hay eventos destacados"
         binding.txtSubtitle.text = "Consulta la sección de efemérides"
-        binding.txtBody.text = "No se han podido cargar los eventos históricos para hoy."
+        binding.txtBody.text =
+            "No se han podido cargar los eventos históricos para hoy."
         binding.imgFeatured.isVisible = false
     }
 

@@ -1,10 +1,8 @@
 package com.example.androiddevelopers.ui.events
 
 import android.util.Log
-import java.util.Calendar
-import com.example.androiddevelopers.ui.events.Apis
-import com.example.androiddevelopers.ui.events.HistoricEvent
 import java.net.UnknownHostException
+import java.util.Calendar
 
 class HistoricalEventsRepository {
 
@@ -19,20 +17,32 @@ class HistoricalEventsRepository {
             if (response.isSuccessful) {
                 val wikipediaEvents = response.body()?.events ?: emptyList()
 
-                val events = wikipediaEvents.mapIndexed { index, wikipediaEvent ->
-                    val pageWithImage = wikipediaEvent.pages.firstOrNull { it.thumbnail != null || it.originalimage != null }
-                    val imageUrl = pageWithImage?.originalimage?.source ?: pageWithImage?.thumbnail?.source
-                    Log.d("HistoricalEventsRepo", "Event: ${wikipediaEvent.text}, Image URL: $imageUrl")
+                val events =
+                    wikipediaEvents.mapIndexed { index, wikipediaEvent ->
+                        val pageWithImage =
+                            wikipediaEvent.pages.firstOrNull {
+                                it.thumbnail != null
+                                        || it.originalimage != null
+                            }
+                        val imageUrl = pageWithImage?.originalimage?.source
+                            ?: pageWithImage?.thumbnail?.source
+                        Log.d(
+                            "HistoricalEventsRepo",
+                            "Event: ${wikipediaEvent.text}, Image URL: $imageUrl"
+                        )
 
-                    HistoricEvent(
-                        id = index + 1,
-                        title = pageWithImage?.title?.replace("_", " ") ?: "Evento Histórico",
-                        date = wikipediaEvent.year,
-                        shortDescription = wikipediaEvent.text,
-                        detailedDescription = buildDetailedDescription(wikipediaEvent),
-                        imageUrl = imageUrl
-                    )
-                }
+                        HistoricEvent(
+                            id = index + 1,
+                            title = pageWithImage?.title?.replace("_", " ")
+                                ?: "Evento Histórico",
+                            date = wikipediaEvent.year,
+                            shortDescription = wikipediaEvent.text,
+                            detailedDescription = buildDetailedDescription(
+                                wikipediaEvent
+                            ),
+                            imageUrl = imageUrl
+                        )
+                    }
 
                 if (events.isNotEmpty()) {
                     Result.success(events)

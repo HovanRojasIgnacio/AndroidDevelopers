@@ -1,4 +1,4 @@
-# 🏛️ Histoday
+# 🏛️ HistoDay
 
 Aplicación móvil de temática histórica que combina efemérides diarias y juegos de preguntas sobre historia.  
 

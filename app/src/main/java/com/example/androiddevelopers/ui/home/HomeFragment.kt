@@ -2,6 +2,8 @@ package com.example.androiddevelopers.ui.home
 
 import android.os.Bundle
 import android.view.View
+import android.view.animation.AnimationUtils
+import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -28,10 +30,18 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         setupUI()
         observeEvents()
+        observeDate()
     }
 
     private fun setupUI() {
-        binding.txtDate.text = getCurrentDateSimple()
+        // 1. Vincular los botones de navegación
+        binding.btnPreviousDay.setOnClickListener {
+            viewModel.goToPreviousDay()
+        }
+        binding.btnNextDay.setOnClickListener {
+            viewModel.goToNextDay()
+        }
+        // binding.txtDate.text = getCurrentDateSimple()
     }
 
     private fun observeEvents() {
@@ -51,6 +61,31 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 if (isLoading && viewModel.events.value.isEmpty()) {
                     showLoadingState()
                 }
+            }
+        }
+    }
+
+    private fun observeDate() {
+        // Necesitas una referencia al contenedor de la fecha para animarlo
+        val dateContainer =
+            binding.root.findViewById<LinearLayout>(R.id.date_info) // Si le diste un ID
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.currentDate.collectLatest { calendar ->
+
+                // 1. Obtener los componentes de fecha
+                val (day, month) = viewModel.getFormattedDateComponents(calendar)
+
+                // 2. Aplicar animación al TextView del día
+                val anim =
+                    AnimationUtils.loadAnimation(context, R.anim.slide_down)
+
+                // 3. Actualizar el texto
+                binding.txtDay.text = day
+                binding.txtMonth.text = month
+
+                // 4. Iniciar la animación
+                binding.txtDay.startAnimation(anim)
             }
         }
     }

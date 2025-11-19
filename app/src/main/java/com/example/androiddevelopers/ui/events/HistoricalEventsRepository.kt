@@ -91,4 +91,61 @@ class HistoricalEventsRepository {
             )
         )
     }
+
+    suspend fun getEventsForDate(
+        month: Int,
+        day: Int
+    ): Result<List<HistoricEvent>> {
+        return try {
+            val today = Calendar.getInstance()
+
+            val response = Apis.wikipedia.getEventsOnThisDay(month, day)
+
+            if (response.isSuccessful) {
+                val wikipediaEvents = response.body()?.events ?: emptyList()
+
+                val events =
+                    wikipediaEvents.mapIndexed { index, wikipediaEvent ->
+                        val pageWithImage =
+                            wikipediaEvent.pages.firstOrNull {
+                                it.thumbnail != null
+                                        || it.originalimage != null
+                            }
+                        val imageUrl = pageWithImage?.originalimage?.source
+                            ?: pageWithImage?.thumbnail?.source
+                        Log.d(
+                            "HistoricalEventsRepo",
+                            "Event: ${wikipediaEvent.text}, Image URL: $imageUrl"
+                        )
+
+                        HistoricEvent(
+                            id = index + 1,
+                            title = pageWithImage?.title?.replace("_", " ")
+                                ?: "Evento Histórico",
+                            date = wikipediaEvent.year,
+                            shortDescription = wikipediaEvent.text,
+                            detailedDescription = buildDetailedDescription(
+                                wikipediaEvent
+                            ),
+                            imageUrl = imageUrl
+                        )
+                    }
+
+                if (events.isNotEmpty()) {
+                    Result.success(events)
+                } else {
+                    Result.success(getDefaultEvents())
+                }
+            } else {
+                //si falla se usan los hardcodeados
+                Result.success(getDefaultEvents())
+            }
+        } catch (e: UnknownHostException) {
+            println("ERROR DE CONEXIÓN: ${e.message}")
+            Result.failure(e)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
 }

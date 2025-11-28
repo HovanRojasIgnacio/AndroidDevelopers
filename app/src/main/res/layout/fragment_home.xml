@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToPadding="false"
@@ -16,32 +14,94 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Imagen: bajada con margen superior -->
+        <!-- Imagen. Este atributo android:adjustViewBounds="true" garantiza
+         que la imagen se vea bien ya que la API nos sirve tanto imagenes
+         horizontales como verticales -->
+
+        <LinearLayout
+            android:id="@+id/date_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btn_previous_day"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Día anterior"
+                android:padding="4dp"
+                android:src="@drawable/arrow_back" />
+
+            <LinearLayout
+
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtDay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="19"
+                    android:textColor="@color/black"
+                    android:textSize="32sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtMonth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Noviembre"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btn_next_day"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Día siguiente"
+                android:padding="4dp"
+                android:src="@drawable/arrow_forward" />
+
+        </LinearLayout>
+
         <ImageView
             android:id="@+id/imgFeatured"
             android:layout_width="match_parent"
-            android:layout_height="220dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
-            android:src="@drawable/babilonia"
-            android:contentDescription="@string/app_name" />
+            android:contentDescription="@string/app_name"
+            android:scaleType="fitCenter"
+            android:src="@drawable/babilonia" />
 
-        <!-- Fecha “Un día como hoy …” -->
-        <TextView
-            android:id="@+id/txtDate"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="6dp"
-            android:textStyle="bold"
-            android:textAllCaps="false"
-            android:textSize="14sp"
-            android:background="@android:color/darker_gray"
-            android:textColor="@android:color/white" />
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-        <!-- Título vistoso -->
+            <TextView
+                android:id="@+id/txtYear"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="2025"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
         <TextView
             android:id="@+id/txtTitle"
             android:layout_width="match_parent"
@@ -68,6 +128,7 @@
             android:layout_marginTop="14dp"
             android:textSize="16sp"
             android:lineSpacingExtra="4dp" />
+
 
     </LinearLayout>
 

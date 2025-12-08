@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.androiddevelopers.R
@@ -24,6 +25,14 @@ class HistoricEventAdapter :
 
     var events: List<HistoricEvent> = emptyList()
     var onItemClick: ((HistoricEvent) -> Unit)? = null
+
+    fun updateList(newList: List<HistoricEvent>) {
+        val diffCallback = EventDiffCallback(this.events, newList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+
+        this.events = newList
+        diffResult.dispatchUpdatesTo(this) // Notifica solo los cambios
+    }
 
     class EventViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val title: TextView = itemView.findViewById(R.id.event_title)
@@ -67,4 +76,30 @@ class HistoricEventAdapter :
     }
 
     override fun getItemCount() = events.size
+}
+
+class EventDiffCallback(
+    private val oldList: List<HistoricEvent>,
+    private val newList: List<HistoricEvent>
+) : DiffUtil.Callback() {
+
+    override fun getOldListSize(): Int = oldList.size
+
+    override fun getNewListSize(): Int = newList.size
+
+    override fun areItemsTheSame(
+        oldItemPosition: Int,
+        newItemPosition: Int
+    ): Boolean {
+        // Compara por ID único (para ver si es el mismo objeto)
+        return oldList[oldItemPosition].id == newList[newItemPosition].id
+    }
+
+    override fun areContentsTheSame(
+        oldItemPosition: Int,
+        newItemPosition: Int
+    ): Boolean {
+        // Compara por todos los campos para ver si los datos han cambiado
+        return oldList[oldItemPosition] == newList[newItemPosition]
+    }
 }

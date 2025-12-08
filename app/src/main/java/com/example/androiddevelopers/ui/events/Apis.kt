@@ -1,6 +1,5 @@
 package com.example.androiddevelopers.ui.events
 
-import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -24,7 +23,10 @@ object Apis {
         .addInterceptor { chain ->
             val originalRequest = chain.request()
             val requestWithUserAgent = originalRequest.newBuilder()
-                .header("User-Agent", "HistoricalEventsApp/1.0 (https://github.com/example; androidDevelopers@example.com)")
+                .header(
+                    "User-Agent",
+                    "HistoricalEventsApp/1.0 (https://github.com/example; androidDevelopers@example.com)"
+                )
                 .header("Accept", "application/json")
                 .build()
             chain.proceed(requestWithUserAgent)

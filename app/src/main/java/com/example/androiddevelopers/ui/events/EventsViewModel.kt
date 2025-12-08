@@ -13,13 +13,14 @@ import java.util.Locale
 class EventsViewModel : ViewModel() {
     private val repository = HistoricalEventsRepository()
 
-    // --- ESTADO DE FECHA ---
     private val _currentDate = MutableStateFlow(Calendar.getInstance())
     val currentDate: StateFlow<Calendar> = _currentDate.asStateFlow()
-    // ----------------------
 
     private val _events = MutableStateFlow<List<HistoricEvent>>(emptyList())
     val events: StateFlow<List<HistoricEvent>> = _events.asStateFlow()
+
+    private val _currentEventType = MutableStateFlow(EventType.EVENTS)
+    val currentEventType: StateFlow<EventType> = _currentEventType.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
@@ -40,13 +41,13 @@ class EventsViewModel : ViewModel() {
         _isLoading.value = true
         _error.value = null
 
-        // Obtener mes y día de la fecha almacenada en el StateFlow
         val calendar = _currentDate.value
         val month = calendar.get(Calendar.MONTH) + 1
         val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val eventType = _currentEventType.value.apiPath
 
         viewModelScope.launch {
-            val result = repository.getEventsForDate(month, day)
+            val result = repository.getEventsForDate(eventType, month, day)
 
             if (result.isSuccess) {
                 _events.value = result.getOrNull() ?: emptyList()
@@ -77,6 +78,13 @@ class EventsViewModel : ViewModel() {
         return Pair(day, monthName) // Retorna el día y el mes
     }
 
+    fun setEventType(eventType: EventType) {
+        if (_currentEventType.value != eventType) {
+            _currentEventType.value = eventType
+            loadEvents()
+        }
+    }
+
     private fun getDefaultEvents(): List<HistoricEvent> {
         return listOf(
             HistoricEvent(
@@ -103,7 +111,4 @@ class EventsViewModel : ViewModel() {
         )
     }
 
-    fun getEventById(id: Int): HistoricEvent? {
-        return _events.value.find { it.id == id }
-    }
 }

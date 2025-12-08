@@ -1,6 +1,7 @@
 package com.example.androiddevelopers.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -16,9 +17,12 @@ import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.example.androiddevelopers.R
 import com.example.androiddevelopers.databinding.FragmentHomeBinding
+import com.example.androiddevelopers.ui.events.EventType
+import com.example.androiddevelopers.ui.events.EventTypeAdapter
 import com.example.androiddevelopers.ui.events.EventsViewModel
 import com.example.androiddevelopers.ui.events.HistoricEvent
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -27,21 +31,33 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-
+    private lateinit var eventTypeAdapter: EventTypeAdapter
+    private lateinit var tabLayout: TabLayout
     private val viewModel: EventsViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentHomeBinding.bind(view)
-
+        tabLayout = view.findViewById(R.id.tab_event_types)
         setupUI()
         observeEvents()
         observeDate()
         setupMenu()
+        observeEventType()
+    }
+
+    private fun observeEventType() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.currentEventType.collectLatest { eventType ->
+                if (::eventTypeAdapter.isInitialized) {
+                    eventTypeAdapter.setCurrentSelection(eventType)
+                    Log.d("Ñaña", eventType.typeName)
+                }
+            }
+        }
     }
 
     private fun setupUI() {
-        // 1. Vincular los botones de navegación
         binding.btnPreviousDay.setOnClickListener {
             val newDate = viewModel.currentDate.value.clone() as Calendar
             newDate.add(Calendar.DAY_OF_YEAR, -1)
@@ -52,7 +68,41 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             newDate.add(Calendar.DAY_OF_YEAR, +1)
             viewModel.setDate(newDate)
         }
+        eventTypeAdapter = EventTypeAdapter(viewModel::setEventType)
+        setupTabLayout()
 
+    }
+
+    private fun setupTabLayout() {
+        // 1. Crear las pestañas y asignarles el nombre del enum
+        EventType.entries.forEachIndexed { index, eventType ->
+            tabLayout.addTab(
+                tabLayout.newTab().setText(eventType.typeName).setTag(eventType)
+            )
+        }
+
+        // 2. Listener de cambio de pestaña
+        tabLayout.addOnTabSelectedListener(object :
+            TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                val eventType = tab.tag as? EventType
+                if (eventType != null) {
+                    // Llamar al ViewModel para cambiar el filtro y recargar los datos
+                    viewModel.setEventType(eventType)
+                }
+            }
+
+            // Estas son obligatorias pero no necesarias para la lógica del filtro
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+            override fun onTabReselected(tab: TabLayout.Tab) {}
+        })
+
+        // 3. Inicializar la selección al tipo EVENTS (si el ViewModel lo necesita)
+        // Opcional: Esto ya debería ocurrir en el init del ViewModel, pero asegura el estado inicial.
+        val initialType = EventType.EVENTS
+        val initialTab =
+            tabLayout.getTabAt(EventType.entries.indexOf(initialType))
+        initialTab?.select()
     }
 
     // Configuración del menú de la Toolbar

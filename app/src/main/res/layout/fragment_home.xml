@@ -2,6 +2,7 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:clipToPadding="false"
     android:paddingTop="?attr/actionBarSize"
     android:paddingBottom="16dp"
@@ -68,6 +69,21 @@
                 android:src="@drawable/arrow_forward" />
 
         </LinearLayout>
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_event_types"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="@android:color/transparent"
+            app:tabTextAppearance="@style/TabTextAppearance.Smaller"
+            app:tabIndicatorColor="@color/primary_red"
+            app:tabIndicatorGravity="bottom"
+            app:tabIndicatorHeight="2dp"
+            app:tabMode="scrollable"
+            app:tabGravity="fill"
+            app:tabTextColor="@color/tab_text_selector"
+            app:tabSelectedTextColor="@color/primary_red" />
 
         <ImageView
             android:id="@+id/imgFeatured"

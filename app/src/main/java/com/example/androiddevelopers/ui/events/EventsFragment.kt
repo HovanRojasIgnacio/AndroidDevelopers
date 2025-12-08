@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,7 +28,7 @@ class EventsFragment : Fragment(R.layout.fragment_events) {
     }
 
     private fun setupRecyclerView(view: View) {
-        recyclerView = view.findViewById(R.id.events_recycler_view)
+        recyclerView = view.findViewById(R.id.tab_event_types)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
     }
 
@@ -44,8 +43,7 @@ class EventsFragment : Fragment(R.layout.fragment_events) {
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.events.collectLatest { events ->
-                adapter.events = events
-                adapter.notifyDataSetChanged()
+                adapter.updateList(events)
             }
         }
     }

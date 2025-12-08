@@ -2,65 +2,8 @@ package com.example.androiddevelopers.ui.events
 
 import android.util.Log
 import java.net.UnknownHostException
-import java.util.Calendar
 
 class HistoricalEventsRepository {
-
-    suspend fun getTodayHistoricalEvents(): Result<List<HistoricEvent>> {
-        return try {
-            val today = Calendar.getInstance()
-            val month = today.get(Calendar.MONTH) + 1
-            val day = today.get(Calendar.DAY_OF_MONTH)
-
-            val response = Apis.wikipedia.getEventsOnThisDay(month, day)
-
-            if (response.isSuccessful) {
-                val wikipediaEvents = response.body()?.events ?: emptyList()
-
-                val events =
-                    wikipediaEvents.mapIndexed { index, wikipediaEvent ->
-                        val pageWithImage =
-                            wikipediaEvent.pages.firstOrNull {
-                                it.thumbnail != null
-                                        || it.originalimage != null
-                            }
-                        val imageUrl = pageWithImage?.originalimage?.source
-                            ?: pageWithImage?.thumbnail?.source
-                        Log.d(
-                            "HistoricalEventsRepo",
-                            "Event: ${wikipediaEvent.text}, Image URL: $imageUrl"
-                        )
-
-                        HistoricEvent(
-                            id = index + 1,
-                            title = pageWithImage?.title?.replace("_", " ")
-                                ?: "Evento Histórico",
-                            date = wikipediaEvent.year,
-                            shortDescription = wikipediaEvent.text,
-                            detailedDescription = buildDetailedDescription(
-                                wikipediaEvent
-                            ),
-                            imageUrl = imageUrl
-                        )
-                    }
-
-                if (events.isNotEmpty()) {
-                    Result.success(events)
-                } else {
-                    Result.success(getDefaultEvents())
-                }
-            } else {
-                //si falla se usan los hardcodeados
-                Result.success(getDefaultEvents())
-            }
-        } catch (e: UnknownHostException) {
-            println("ERROR DE CONEXIÓN: ${e.message}")
-            Result.failure(e)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Result.failure(e)
-        }
-    }
 
     private fun buildDetailedDescription(event: WikipediaEvent): String {
         return "En el año ${event.year}: ${event.text}"
@@ -93,16 +36,23 @@ class HistoricalEventsRepository {
     }
 
     suspend fun getEventsForDate(
+        eventType: String,
         month: Int,
         day: Int
     ): Result<List<HistoricEvent>> {
         return try {
-            val today = Calendar.getInstance()
 
-            val response = Apis.wikipedia.getEventsOnThisDay(month, day)
+            val response =
+                Apis.wikipedia.getEventsOnThisDay(eventType, month, day)
 
             if (response.isSuccessful) {
-                val wikipediaEvents = response.body()?.events ?: emptyList()
+                val body = response.body()
+                val wikipediaEvents = when (eventType) {
+                    "events" -> body?.events
+                    "births" -> body?.births // <-- Extraer de 'births'
+                    "deaths" -> body?.deaths // <-- Extraer de 'deaths'
+                    else -> emptyList()
+                } ?: emptyList()
 
                 val events =
                     wikipediaEvents.mapIndexed { index, wikipediaEvent ->

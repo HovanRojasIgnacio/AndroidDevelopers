@@ -1,0 +1,7 @@
+<resources>
+
+    <style name="TabTextAppearance.Smaller" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+</resources>

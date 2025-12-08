@@ -17,8 +17,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.androiddevelopers.R
 import com.example.androiddevelopers.databinding.FragmentHomeBinding
+import com.example.androiddevelopers.presentation.EventsViewModel
 import com.example.androiddevelopers.ui.events.EventType
-import com.example.androiddevelopers.ui.events.EventsViewModel
 import com.example.androiddevelopers.ui.events.HistoricEventAdapter
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.tabs.TabLayout

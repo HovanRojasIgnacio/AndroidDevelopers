@@ -1,4 +1,4 @@
-package com.example.androiddevelopers.ui.events
+package com.example.androiddevelopers.data.remote
 
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.SerialName

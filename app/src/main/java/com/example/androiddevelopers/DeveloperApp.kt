@@ -4,7 +4,8 @@ import android.app.Application
 import androidx.room.Room
 import coil.ImageLoader
 import coil.ImageLoaderFactory
-import com.example.androiddevelopers.ui.events.Apis
+import com.example.androiddevelopers.data.local.AppDatabase
+import com.example.androiddevelopers.data.remote.Apis
 
 class DeveloperApp : Application() , ImageLoaderFactory {
 

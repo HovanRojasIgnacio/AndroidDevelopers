@@ -1,4 +1,4 @@
-package com.example.androiddevelopers.ui.events
+package com.example.androiddevelopers.data.remote
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

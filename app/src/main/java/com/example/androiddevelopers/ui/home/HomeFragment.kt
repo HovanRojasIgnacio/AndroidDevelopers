@@ -15,13 +15,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
 import com.example.androiddevelopers.R
 import com.example.androiddevelopers.databinding.FragmentHomeBinding
 import com.example.androiddevelopers.ui.events.EventType
-import com.example.androiddevelopers.ui.events.EventTypeAdapter
 import com.example.androiddevelopers.ui.events.EventsViewModel
-import com.example.androiddevelopers.ui.events.HistoricEvent
 import com.example.androiddevelopers.ui.events.HistoricEventAdapter
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.tabs.TabLayout
@@ -33,7 +30,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private lateinit var eventTypeAdapter: EventTypeAdapter
     private lateinit var tabLayout: TabLayout
     private val viewModel: EventsViewModel by activityViewModels()
     private lateinit var homeRecyclerView: RecyclerView
@@ -48,34 +44,16 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         observeEvents()
         observeDate()
         setupMenu()
-        observeEventType()
-    }
-
-    private fun observeEventType() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.currentEventType.collectLatest { eventType ->
-                if (::eventTypeAdapter.isInitialized) {
-                    eventTypeAdapter.setCurrentSelection(eventType)
-                    Log.d("Ñaña", eventType.typeName)
-                }
-            }
-        }
     }
 
     private fun setupHomeRecyclerView(view: View) {
         homeRecyclerView = view.findViewById(R.id.home_events_recycler_list)
-
-        // Usamos el mismo adaptador que muestra la estructura HistoricEvent
         homeEventsAdapter = HistoricEventAdapter().apply {
-            // Define la acción al hacer clic en un ítem (ej: abrir detalles)
             onItemClick = { event ->
-                // Implementa aquí la navegación a detalles del evento si la tienes
                 Log.d("HomeFragment", "Clicked event ID: ${event.id}")
             }
         }
-
         homeRecyclerView.adapter = homeEventsAdapter
-        // No necesitamos asignar LayoutManager si ya lo hicimos en el XML
     }
 
     private fun setupUI() {
@@ -89,20 +67,16 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             newDate.add(Calendar.DAY_OF_YEAR, +1)
             viewModel.setDate(newDate)
         }
-        eventTypeAdapter = EventTypeAdapter(viewModel::setEventType)
         setupTabLayout()
-
     }
 
     private fun setupTabLayout() {
-        // 1. Crear las pestañas y asignarles el nombre del enum
         EventType.entries.forEachIndexed { index, eventType ->
             tabLayout.addTab(
                 tabLayout.newTab().setText(eventType.typeName).setTag(eventType)
             )
         }
 
-        // 2. Listener de cambio de pestaña
         tabLayout.addOnTabSelectedListener(object :
             TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
@@ -113,13 +87,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 }
             }
 
-            // Estas son obligatorias pero no necesarias para la lógica del filtro
             override fun onTabUnselected(tab: TabLayout.Tab) {}
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
 
-        // 3. Inicializar la selección al tipo EVENTS (si el ViewModel lo necesita)
-        // Opcional: Esto ya debería ocurrir en el init del ViewModel, pero asegura el estado inicial.
         val initialType = EventType.EVENTS
         val initialTab =
             tabLayout.getTabAt(EventType.entries.indexOf(initialType))
@@ -170,11 +141,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private fun observeEvents() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.events.collectLatest { events ->
-                if (events.isNotEmpty()) {
-                    homeEventsAdapter.updateList(events)
-                } else {
-                    homeEventsAdapter.updateList(emptyList())
-                    displayEmptyState()
+                homeEventsAdapter.updateList(events)
+                homeRecyclerView.isVisible = events.isNotEmpty()
+                if (events.isEmpty()) {
+                    showStatusMessage("No se han encontrado eventos para este día y filtro.")
                 }
             }
         }
@@ -182,7 +152,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.isLoading.collect { isLoading ->
                 if (isLoading && viewModel.events.value.isEmpty()) {
-                    showLoadingState()
+                    showStatusMessage("No se han encontrado eventos para este día y filtro.")
                 }
             }
         }
@@ -213,42 +183,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
-    private fun displayFeaturedEvent(event: HistoricEvent) {
-        binding.eventDate.text = event.date
-        binding.eventTitle.text = event.title
-        // binding.txtSubtitle.text = "${event.shortDescription}"
-        binding.eventShortDescription.text = event.detailedDescription
-
-        val imageUrl = event.imageUrl?.trim()
-        if (!imageUrl.isNullOrEmpty()) {
-            binding.eventImage.isVisible = true
-            binding.eventImage.load(imageUrl) {
-                crossfade(true)
-                placeholder(android.R.drawable.ic_menu_gallery)
-                error(android.R.drawable.ic_menu_report_image)
-            }
-        } else {
-            binding.eventImage.isVisible = false
-        }
-    }
-
-    private fun displayEmptyState() {
-        binding.eventTitle.text = "No hay eventos destacados"
-        //binding.txtSubtitle.text = "Consulta la sección de efemérides"
-        binding.eventShortDescription.text =
-            "No se han podido cargar los eventos históricos para hoy."
-        binding.eventImage.isVisible = false
-    }
-
-    private fun showLoadingState() {
-        binding.eventTitle.text = "Cargando..."
-        //binding.txtSubtitle.text = "Obteniendo eventos históricos"
-        binding.eventShortDescription.text = ""
-        binding.eventImage.isVisible = false
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun showStatusMessage(message: String) {
+        Log.d("HomeFragment", "STATUS: $message")
     }
 }

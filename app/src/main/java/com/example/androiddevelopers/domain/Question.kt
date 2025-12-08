@@ -1,4 +1,4 @@
-package com.example.androiddevelopers.ui.game.model
+package com.example.androiddevelopers.domain
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

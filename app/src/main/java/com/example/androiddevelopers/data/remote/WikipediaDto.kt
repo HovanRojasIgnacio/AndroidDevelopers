@@ -1,4 +1,4 @@
-package com.example.androiddevelopers.ui.events
+package com.example.androiddevelopers.data.remote
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

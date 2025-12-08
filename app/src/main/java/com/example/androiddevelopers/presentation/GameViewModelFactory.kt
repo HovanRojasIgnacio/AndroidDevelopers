@@ -1,8 +1,8 @@
-package com.example.androiddevelopers.ui.game
+package com.example.androiddevelopers.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.androiddevelopers.ui.game.model.QuestionDao
+import com.example.androiddevelopers.data.local.QuestionDao
 
 class GameViewModelFactory(private val questionDao: QuestionDao) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

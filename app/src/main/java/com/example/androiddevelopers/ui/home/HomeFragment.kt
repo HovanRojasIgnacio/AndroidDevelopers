@@ -11,8 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.example.androiddevelopers.R
 import com.example.androiddevelopers.databinding.FragmentHomeBinding
-import com.example.androiddevelopers.ui.events.EventsViewModel
-import com.example.androiddevelopers.ui.events.HistoricEvent
+import com.example.androiddevelopers.domain.HistoricalEvent
+import com.example.androiddevelopers.presentation.EventsViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -90,10 +90,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
-    private fun displayFeaturedEvent(event: HistoricEvent) {
-        binding.txtYear.text = event.date
+    private fun displayFeaturedEvent(event: HistoricalEvent) {
+        binding.txtYear.text = event.year
         binding.txtTitle.text = event.title
-        binding.txtSubtitle.text = "${event.shortDescription}"
+        binding.txtSubtitle.text = "${event.description}"
         binding.txtBody.text = event.detailedDescription
 
         val imageUrl = event.imageUrl?.trim()

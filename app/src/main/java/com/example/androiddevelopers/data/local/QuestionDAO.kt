@@ -1,7 +1,8 @@
-package com.example.androiddevelopers.ui.game.model
+package com.example.androiddevelopers.data.local
 
 import androidx.room.Dao
 import androidx.room.Query
+import com.example.androiddevelopers.domain.Question
 
 @Dao
 interface QuestionDao {

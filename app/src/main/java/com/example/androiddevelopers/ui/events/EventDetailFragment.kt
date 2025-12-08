@@ -11,6 +11,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.example.androiddevelopers.R
+import com.example.androiddevelopers.domain.HistoricalEvent
+import com.example.androiddevelopers.presentation.EventsViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -39,9 +41,9 @@ class EventDetailFragment: Fragment(R.layout.fragment_event_detail) {
         }
     }
 
-    private fun setupView(view: View, event: HistoricEvent) {
+    private fun setupView(view: View, event: HistoricalEvent) {
         view.findViewById<TextView>(R.id.detail_title).text = event.title
-        view.findViewById<TextView>(R.id.detail_date).text = event.date
+        view.findViewById<TextView>(R.id.detail_date).text = event.year
         view.findViewById<TextView>(R.id.detail_description).text = event.detailedDescription
         val imageView = view.findViewById<ImageView>(R.id.detail_image)
         val imageUrl = event.imageUrl?.trim()

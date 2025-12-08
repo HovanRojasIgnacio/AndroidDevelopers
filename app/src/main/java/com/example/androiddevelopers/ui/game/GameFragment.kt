@@ -12,6 +12,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.androiddevelopers.DeveloperApp
 import com.example.androiddevelopers.R
+import com.example.androiddevelopers.presentation.GameViewModel
+import com.example.androiddevelopers.presentation.GameViewModelFactory
 import kotlinx.coroutines.launch
 
 class GameFragment : Fragment(R.layout.fragment_game) {

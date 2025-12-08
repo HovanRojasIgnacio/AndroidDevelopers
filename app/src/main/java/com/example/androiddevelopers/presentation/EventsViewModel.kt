@@ -1,7 +1,9 @@
-package com.example.androiddevelopers.ui.events
+package com.example.androiddevelopers.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.androiddevelopers.data.repository.HistoricalEventsRepository
+import com.example.androiddevelopers.domain.HistoricalEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,8 +20,8 @@ class EventsViewModel : ViewModel() {
     val currentDate: StateFlow<Calendar> = _currentDate.asStateFlow()
     // ----------------------
 
-    private val _events = MutableStateFlow<List<HistoricEvent>>(emptyList())
-    val events: StateFlow<List<HistoricEvent>> = _events.asStateFlow()
+    private val _events = MutableStateFlow<List<HistoricalEvent>>(emptyList())
+    val events: StateFlow<List<HistoricalEvent>> = _events.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
@@ -94,33 +96,39 @@ class EventsViewModel : ViewModel() {
         return Pair(day, monthName) // Retorna el día y el mes
     }
 
-    private fun getDefaultEvents(): List<HistoricEvent> {
+    private fun getDefaultEvents(): List<HistoricalEvent> {
         return listOf(
-            HistoricEvent(
+            HistoricalEvent(
                 id = 1,
                 title = "Caída de Babilonia",
-                date = "539 a. C.",
-                shortDescription = "Ciro el Grande conquista Babilonia",
-                detailedDescription = "En el 29 de octubre de 539 a. C., Ciro el Grande tomó Babilonia, poniendo fin al Imperio neobabilónico y permitiendo el retorno de los judíos exiliados."
+                year = "539 a. C.",
+                description = "Ciro el Grande conquista Babilonia",
+                detailedDescription = "En el 29 de octubre de 539 a. C., Ciro el Grande tomó Babilonia, poniendo fin al Imperio neobabilónico y permitiendo el retorno de los judíos exiliados.",
+                imageUrl = null,
+                articleUrl = null
             ),
-            HistoricEvent(
+            HistoricalEvent(
                 id = 2,
                 title = "Batalla del Puente Milvio",
-                date = "312 d. C.",
-                shortDescription = "Constantino regresa a Roma tras vencer en el Puente Milvio",
-                detailedDescription = "El 29 de octubre de 312, el emperador Constantino el Grande regresó a Roma después de su victoria en la Batalla del Puente Milvio, acontecimiento clave en su ascenso y posterior conversión al cristianismo."
+                year = "312 d. C.",
+                description = "Constantino regresa a Roma tras vencer en el Puente Milvio",
+                detailedDescription = "El 29 de octubre de 312, el emperador Constantino el Grande regresó a Roma después de su victoria en la Batalla del Puente Milvio.",
+                imageUrl = null,
+                articleUrl = null
             ),
-            HistoricEvent(
+            HistoricalEvent(
                 id = 3,
-                title = "Estreno de la ópera Don Giovanni",
-                date = "1787",
-                shortDescription = "Mozart presenta Don Giovanni en Praga",
-                detailedDescription = "El 29 de octubre de 1787 se estrenó la ópera *Don Giovanni*, compuesta por Wolfgang Amadeus Mozart, en el Teatro Estatal de Praga."
+                title = "Estreno de Don Giovanni",
+                year = "1787",
+                description = "Mozart presenta Don Giovanni en Praga",
+                detailedDescription = "El 29 de octubre de 1787 se estrenó la ópera Don Giovanni, compuesta por Wolfgang Amadeus Mozart, en el Teatro Estatal de Praga.",
+                imageUrl = null,
+                articleUrl = null
             )
         )
     }
 
-    fun getEventById(id: Int): HistoricEvent? {
+    fun getEventById(id: Int): HistoricalEvent? {
         return _events.value.find { it.id == id }
     }
 }

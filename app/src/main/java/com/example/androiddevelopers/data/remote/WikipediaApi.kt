@@ -1,4 +1,4 @@
-package com.example.androiddevelopers.ui.events
+package com.example.androiddevelopers.data.remote
 
 import retrofit2.Response
 import retrofit2.http.GET

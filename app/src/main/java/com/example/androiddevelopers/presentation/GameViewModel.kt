@@ -1,10 +1,8 @@
-package com.example.androiddevelopers.ui.game
+package com.example.androiddevelopers.presentation
 
 import androidx.lifecycle.ViewModel
-import com.example.androiddevelopers.ui.game.model.Question
-import com.example.androiddevelopers.ui.game.model.QuestionDao
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
+import com.example.androiddevelopers.domain.Question
+import com.example.androiddevelopers.data.local.QuestionDao
 
 class GameViewModel(private val questionDao: QuestionDao) : ViewModel() {
 

@@ -6,6 +6,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.androiddevelopers.R
+import com.example.androiddevelopers.presentation.SettingsViewModel
 
 class SettingsFragment : Fragment(R.layout.fragment_settings) {
 

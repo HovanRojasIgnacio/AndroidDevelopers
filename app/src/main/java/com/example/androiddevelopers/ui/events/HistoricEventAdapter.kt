@@ -9,21 +9,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.androiddevelopers.R
-
-data class HistoricEvent(
-    val id: Int,
-    val title: String,
-    val date: String,
-    val shortDescription: String,
-    val detailedDescription: String,
-    val imageUrl: String? = null, //campo opcional para las imágenes
-)
+import com.example.androiddevelopers.domain.HistoricalEvent
 
 class HistoricEventAdapter :
     RecyclerView.Adapter<HistoricEventAdapter.EventViewHolder>() {
 
-    var events: List<HistoricEvent> = emptyList()
-    var onItemClick: ((HistoricEvent) -> Unit)? = null
+    var events: List<HistoricalEvent> = emptyList()
+    var onItemClick: ((HistoricalEvent) -> Unit)? = null
 
     class EventViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val title: TextView = itemView.findViewById(R.id.event_title)
@@ -47,9 +39,8 @@ class HistoricEventAdapter :
     override fun onBindViewHolder(holder: EventViewHolder, position: Int) {
         val event = events[position]
         holder.title.text = event.title
-        holder.date.text = event.date
-        holder.shortDescription.text = event.shortDescription
-        // 2. 🏞️ Cargar la imagen con Coil
+        holder.date.text = event.year
+        holder.shortDescription.text = event.description
         val imageUrl = event.imageUrl
 
         if (!imageUrl.isNullOrEmpty()) {

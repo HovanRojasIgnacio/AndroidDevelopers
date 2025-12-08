@@ -1,18 +1,24 @@
 package com.example.androiddevelopers.ui.home
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
+import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.example.androiddevelopers.R
 import com.example.androiddevelopers.databinding.FragmentHomeBinding
 import com.example.androiddevelopers.ui.events.EventsViewModel
 import com.example.androiddevelopers.ui.events.HistoricEvent
+import com.google.android.material.datepicker.MaterialDatePicker
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -31,17 +37,63 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         setupUI()
         observeEvents()
         observeDate()
+        setupMenu()
     }
 
     private fun setupUI() {
         // 1. Vincular los botones de navegación
         binding.btnPreviousDay.setOnClickListener {
-            viewModel.goToPreviousDay()
+            val newDate = viewModel.currentDate.value.clone() as Calendar
+            newDate.add(Calendar.DAY_OF_YEAR, -1)
+            viewModel.setDate(newDate)
         }
         binding.btnNextDay.setOnClickListener {
-            viewModel.goToNextDay()
+            val newDate = viewModel.currentDate.value.clone() as Calendar
+            newDate.add(Calendar.DAY_OF_YEAR, +1)
+            viewModel.setDate(newDate)
         }
-        // binding.txtDate.text = getCurrentDateSimple()
+
+    }
+
+    // Configuración del menú de la Toolbar
+    private fun setupMenu() {
+
+        requireActivity().addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.toolbar_menu_home, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.action_calendar -> {
+                        showMaterialDatePicker()
+                        true
+                    }
+
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+    }
+
+    private fun showMaterialDatePicker() {
+
+        val initialSelectionTime = viewModel.currentDate.value.timeInMillis
+
+        val datePicker = MaterialDatePicker.Builder.datePicker()
+            .setTitleText("Selecciona el día histórico")
+            .setSelection(initialSelectionTime)
+            .build()
+
+        datePicker.addOnPositiveButtonClickListener { selectionTime ->
+            val selectedCalendar = Calendar.getInstance().apply {
+                timeInMillis = selectionTime
+                set(Calendar.YEAR, Calendar.getInstance().get(Calendar.YEAR))
+            }
+            viewModel.setDate(selectedCalendar)
+        }
+        datePicker.show(childFragmentManager, datePicker.toString())
+
     }
 
     private fun observeEvents() {

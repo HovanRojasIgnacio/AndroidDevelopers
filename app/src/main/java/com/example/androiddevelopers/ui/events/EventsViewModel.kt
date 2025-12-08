@@ -28,6 +28,11 @@ class EventsViewModel : ViewModel() {
     val error = _error.asStateFlow()
 
     init {
+        setDate(_currentDate.value)
+    }
+
+    fun setDate(newCalendar: Calendar) {
+        _currentDate.value = newCalendar.clone() as Calendar
         loadEvents()
     }
 
@@ -41,7 +46,6 @@ class EventsViewModel : ViewModel() {
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
         viewModelScope.launch {
-            // val result = repository.getTodayHistoricalEvents()
             val result = repository.getEventsForDate(month, day)
 
             if (result.isSuccess) {
@@ -55,27 +59,6 @@ class EventsViewModel : ViewModel() {
         }
     }
 
-    fun goToPreviousDay() {
-        // Clonar la fecha actual, restar un día y actualizar el StateFlow
-        val newDate = _currentDate.value.clone() as Calendar
-        newDate.add(Calendar.DAY_OF_YEAR, -1)
-        _currentDate.value = newDate
-
-        loadEvents() // Recargar los eventos para la nueva fecha
-    }
-
-    fun goToNextDay() {
-        // Clonar la fecha actual, sumar un día y actualizar el StateFlow
-        val newDate = _currentDate.value.clone() as Calendar
-        newDate.add(Calendar.DAY_OF_YEAR, 1)
-        _currentDate.value = newDate
-
-        loadEvents() // Recargar los eventos para la nueva fecha
-    }
-
-    // EventsViewModel.kt
-
-    // Renombrar la función para ser más específica
     fun getFormattedDateComponents(calendar: Calendar): Pair<String, String> {
         val day = calendar.get(Calendar.DAY_OF_MONTH).toString()
 

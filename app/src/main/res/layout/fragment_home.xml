@@ -14,10 +14,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Imagen. Este atributo android:adjustViewBounds="true" garantiza
-         que la imagen se vea bien ya que la API nos sirve tanto imagenes
-         horizontales como verticales -->
-
         <LinearLayout
             android:id="@+id/date_info"
             android:layout_width="match_parent"

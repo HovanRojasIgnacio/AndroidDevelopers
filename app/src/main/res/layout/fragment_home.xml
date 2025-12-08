@@ -85,63 +85,70 @@
             app:tabTextColor="@color/tab_text_selector"
             app:tabSelectedTextColor="@color/primary_red" />
 
-        <ImageView
-            android:id="@+id/imgFeatured"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/home_events_recycler_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/app_name"
-            android:scaleType="fitCenter"
-            android:src="@drawable/babilonia" />
+            android:nestedScrollingEnabled="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
+        <!-- Título con mejor estilo -->
+        <TextView
+            android:id="@+id/event_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#2C3E50"
+            android:text="Título del evento"
+            android:drawablePadding="8dp" />
+
+        <!-- Fecha con icono -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_marginTop="8dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:gravity="center_vertical">
 
             <TextView
-                android:id="@+id/txtYear"
-                android:layout_width="0dp"
+                android:id="@+id/event_date"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="start"
-                android:text="2025"
-                android:textSize="25sp"
-                android:textStyle="bold" />
+                android:textSize="13sp"
+                android:textColor="#7F8C8D"
+                android:text="Fecha del evento"
+                android:drawablePadding="4dp" />
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/txtTitle"
+        <!-- Línea divisoria elegante -->
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="1dp"
+            android:background="@drawable/gradient_divider"
             android:layout_marginTop="12dp"
-            android:textStyle="bold"
-            android:textSize="22sp"
-            android:lineSpacingExtra="2dp" />
+            android:layout_marginBottom="12dp" />
 
-        <!-- Subtítulo corto -->
+        <!-- Descripción con mejor formato -->
+
+        <ImageView
+            android:id="@+id/event_image"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            app:srcCompat="@drawable/babilonia" />
+
         <TextView
-            android:id="@+id/txtSubtitle"
+            android:id="@+id/event_short_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:textSize="14sp"
-            android:textColor="@android:color/darker_gray" />
-
-        <!-- Texto extenso (explicación/noticia) -->
-        <TextView
-            android:id="@+id/txtBody"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:textSize="16sp"
-            android:lineSpacingExtra="4dp" />
-
+            android:lineSpacingExtra="2sp"
+            android:text="Descripción corta del evento histórico que aparece en la lista"
+            android:textColor="#34495E"
+            android:layout_marginTop="12dp"
+            android:textSize="14sp" />
 
     </LinearLayout>
+
 
 </androidx.core.widget.NestedScrollView>

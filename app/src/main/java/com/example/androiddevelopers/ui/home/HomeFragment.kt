@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.androiddevelopers.R
 import com.example.androiddevelopers.databinding.FragmentHomeBinding
@@ -21,6 +22,7 @@ import com.example.androiddevelopers.ui.events.EventType
 import com.example.androiddevelopers.ui.events.EventTypeAdapter
 import com.example.androiddevelopers.ui.events.EventsViewModel
 import com.example.androiddevelopers.ui.events.HistoricEvent
+import com.example.androiddevelopers.ui.events.HistoricEventAdapter
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.flow.collectLatest
@@ -34,12 +36,15 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private lateinit var eventTypeAdapter: EventTypeAdapter
     private lateinit var tabLayout: TabLayout
     private val viewModel: EventsViewModel by activityViewModels()
+    private lateinit var homeRecyclerView: RecyclerView
+    private lateinit var homeEventsAdapter: HistoricEventAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentHomeBinding.bind(view)
         tabLayout = view.findViewById(R.id.tab_event_types)
         setupUI()
+        setupHomeRecyclerView(view)
         observeEvents()
         observeDate()
         setupMenu()
@@ -55,6 +60,22 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 }
             }
         }
+    }
+
+    private fun setupHomeRecyclerView(view: View) {
+        homeRecyclerView = view.findViewById(R.id.home_events_recycler_list)
+
+        // Usamos el mismo adaptador que muestra la estructura HistoricEvent
+        homeEventsAdapter = HistoricEventAdapter().apply {
+            // Define la acción al hacer clic en un ítem (ej: abrir detalles)
+            onItemClick = { event ->
+                // Implementa aquí la navegación a detalles del evento si la tienes
+                Log.d("HomeFragment", "Clicked event ID: ${event.id}")
+            }
+        }
+
+        homeRecyclerView.adapter = homeEventsAdapter
+        // No necesitamos asignar LayoutManager si ya lo hicimos en el XML
     }
 
     private fun setupUI() {
@@ -150,9 +171,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.events.collectLatest { events ->
                 if (events.isNotEmpty()) {
-                    val featuredEvent = events.first()
-                    displayFeaturedEvent(featuredEvent)
+                    homeEventsAdapter.updateList(events)
                 } else {
+                    homeEventsAdapter.updateList(emptyList())
                     displayEmptyState()
                 }
             }
@@ -193,50 +214,37 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private fun displayFeaturedEvent(event: HistoricEvent) {
-        binding.txtYear.text = event.date
-        binding.txtTitle.text = event.title
-        binding.txtSubtitle.text = "${event.shortDescription}"
-        binding.txtBody.text = event.detailedDescription
+        binding.eventDate.text = event.date
+        binding.eventTitle.text = event.title
+        // binding.txtSubtitle.text = "${event.shortDescription}"
+        binding.eventShortDescription.text = event.detailedDescription
 
         val imageUrl = event.imageUrl?.trim()
         if (!imageUrl.isNullOrEmpty()) {
-            binding.imgFeatured.isVisible = true
-            binding.imgFeatured.load(imageUrl) {
+            binding.eventImage.isVisible = true
+            binding.eventImage.load(imageUrl) {
                 crossfade(true)
                 placeholder(android.R.drawable.ic_menu_gallery)
                 error(android.R.drawable.ic_menu_report_image)
             }
         } else {
-            binding.imgFeatured.isVisible = false
+            binding.eventImage.isVisible = false
         }
     }
 
     private fun displayEmptyState() {
-        binding.txtTitle.text = "No hay eventos destacados"
-        binding.txtSubtitle.text = "Consulta la sección de efemérides"
-        binding.txtBody.text =
+        binding.eventTitle.text = "No hay eventos destacados"
+        //binding.txtSubtitle.text = "Consulta la sección de efemérides"
+        binding.eventShortDescription.text =
             "No se han podido cargar los eventos históricos para hoy."
-        binding.imgFeatured.isVisible = false
+        binding.eventImage.isVisible = false
     }
 
     private fun showLoadingState() {
-        binding.txtTitle.text = "Cargando..."
-        binding.txtSubtitle.text = "Obteniendo eventos históricos"
-        binding.txtBody.text = ""
-        binding.imgFeatured.isVisible = false
-    }
-
-    private fun getCurrentDateSimple(): String {
-        val calendar = Calendar.getInstance()
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-        val month = calendar.get(Calendar.MONTH)
-
-        val monthNames = arrayOf(
-            "enero", "febrero", "marzo", "abril", "mayo", "junio",
-            "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
-        )
-
-        return "$day de ${monthNames[month]}"
+        binding.eventTitle.text = "Cargando..."
+        //binding.txtSubtitle.text = "Obteniendo eventos históricos"
+        binding.eventShortDescription.text = ""
+        binding.eventImage.isVisible = false
     }
 
     override fun onDestroyView() {

@@ -46,7 +46,6 @@
 
     </LinearLayout>
 
-    <!-- Línea divisoria elegante -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -54,13 +53,13 @@
         android:layout_marginTop="12dp"
         android:layout_marginBottom="12dp" />
 
-    <!-- Descripción con mejor formato -->
 
     <ImageView
         android:id="@+id/event_image"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        app:srcCompat="@drawable/babilonia" />
+        android:visibility="gone"
+        />
 
     <TextView
         android:id="@+id/event_short_description"

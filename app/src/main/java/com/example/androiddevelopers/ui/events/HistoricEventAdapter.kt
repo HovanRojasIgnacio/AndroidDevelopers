@@ -18,7 +18,7 @@ class HistoricEventAdapter :
     var events: List<HistoricalEvent> = emptyList()
     var onItemClick: ((HistoricalEvent) -> Unit)? = null
 
-    fun updateList(newList: List<HistoricEvent>) {
+    fun updateList(newList: List<HistoricalEvent>) {
         val diffCallback = EventDiffCallback(this.events, newList)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
 
@@ -57,8 +57,10 @@ class HistoricEventAdapter :
                 crossfade(true)
                 error(android.R.drawable.ic_menu_report_image)
             }
+            holder.image.visibility = View.VISIBLE
         } else {
             Log.e("CoilError", "URL was null or empty for ${event.title}")
+            holder.image.visibility = View.GONE
         }
         holder.itemView.setOnClickListener {
             onItemClick?.invoke(event)
@@ -70,8 +72,8 @@ class HistoricEventAdapter :
 }
 
 class EventDiffCallback(
-    private val oldList: List<HistoricEvent>,
-    private val newList: List<HistoricEvent>
+    private val oldList: List<HistoricalEvent>,
+    private val newList: List<HistoricalEvent>
 ) : DiffUtil.Callback() {
 
     override fun getOldListSize(): Int = oldList.size

@@ -23,7 +23,10 @@ object Apis {
         .addInterceptor { chain ->
             val originalRequest = chain.request()
             val requestWithUserAgent = originalRequest.newBuilder()
-                .header("User-Agent", "HistoricalEventsApp/1.0 (https://github.com/example; androidDevelopers@example.com)")
+                .header(
+                    "User-Agent",
+                    "HistoricalEventsApp/1.0 (https://github.com/example; androidDevelopers@example.com)"
+                )
                 .header("Accept", "application/json")
                 .build()
             chain.proceed(requestWithUserAgent)

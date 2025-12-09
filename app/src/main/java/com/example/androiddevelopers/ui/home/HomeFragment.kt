@@ -1,18 +1,28 @@
 package com.example.androiddevelopers.ui.home
 
 import android.os.Bundle
+import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
+import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import coil.load
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.example.androiddevelopers.R
 import com.example.androiddevelopers.databinding.FragmentHomeBinding
-import com.example.androiddevelopers.domain.HistoricalEvent
 import com.example.androiddevelopers.presentation.EventsViewModel
+import com.example.androiddevelopers.ui.events.EventType
+import com.example.androiddevelopers.ui.events.HistoricEventAdapter
+import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -21,37 +31,122 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-
+    private lateinit var tabLayout: TabLayout
     private val viewModel: EventsViewModel by activityViewModels()
+    private lateinit var homeRecyclerView: RecyclerView
+    private lateinit var homeEventsAdapter: HistoricEventAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentHomeBinding.bind(view)
-
+        tabLayout = view.findViewById(R.id.tab_event_types)
         setupUI()
+        setupHomeRecyclerView(view)
         observeEvents()
         observeDate()
+        setupMenu()
+    }
+
+    private fun setupHomeRecyclerView(view: View) {
+        homeRecyclerView = view.findViewById(R.id.home_events_recycler_list)
+        homeEventsAdapter = HistoricEventAdapter().apply {
+            onItemClick = { event ->
+                Log.d("HomeFragment", "Clicked event ID: ${event.id}")
+                navigateToEventDetail(event.id)
+            }
+        }
+        homeRecyclerView.adapter = homeEventsAdapter
     }
 
     private fun setupUI() {
-        // 1. Vincular los botones de navegación
         binding.btnPreviousDay.setOnClickListener {
-            viewModel.goToPreviousDay()
+            val newDate = viewModel.currentDate.value.clone() as Calendar
+            newDate.add(Calendar.DAY_OF_YEAR, -1)
+            viewModel.setDate(newDate)
         }
         binding.btnNextDay.setOnClickListener {
-            viewModel.goToNextDay()
+            val newDate = viewModel.currentDate.value.clone() as Calendar
+            newDate.add(Calendar.DAY_OF_YEAR, +1)
+            viewModel.setDate(newDate)
         }
-        // binding.txtDate.text = getCurrentDateSimple()
+        setupTabLayout()
+    }
+
+    private fun setupTabLayout() {
+        EventType.entries.forEachIndexed { index, eventType ->
+            tabLayout.addTab(
+                tabLayout.newTab().setText(eventType.typeName).setTag(eventType)
+            )
+        }
+
+        tabLayout.addOnTabSelectedListener(object :
+            TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                val eventType = tab.tag as? EventType
+                if (eventType != null) {
+                    // Llamar al ViewModel para cambiar el filtro y recargar los datos
+                    viewModel.setEventType(eventType)
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+            override fun onTabReselected(tab: TabLayout.Tab) {}
+        })
+
+        val initialType = EventType.EVENTS
+        val initialTab =
+            tabLayout.getTabAt(EventType.entries.indexOf(initialType))
+        initialTab?.select()
+    }
+
+    // Configuración del menú de la Toolbar
+    private fun setupMenu() {
+
+        requireActivity().addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.toolbar_menu_home, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.action_calendar -> {
+                        showMaterialDatePicker()
+                        true
+                    }
+
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+    }
+
+    private fun showMaterialDatePicker() {
+
+        val initialSelectionTime = viewModel.currentDate.value.timeInMillis
+
+        val datePicker = MaterialDatePicker.Builder.datePicker()
+            .setTitleText("Selecciona el día histórico")
+            .setSelection(initialSelectionTime)
+            .build()
+
+        datePicker.addOnPositiveButtonClickListener { selectionTime ->
+            val selectedCalendar = Calendar.getInstance().apply {
+                timeInMillis = selectionTime
+                set(Calendar.YEAR, Calendar.getInstance().get(Calendar.YEAR))
+            }
+            viewModel.setDate(selectedCalendar)
+        }
+        datePicker.show(childFragmentManager, datePicker.toString())
+
     }
 
     private fun observeEvents() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.events.collectLatest { events ->
-                if (events.isNotEmpty()) {
-                    val featuredEvent = events.first()
-                    displayFeaturedEvent(featuredEvent)
-                } else {
-                    displayEmptyState()
+                homeEventsAdapter.updateList(events)
+                homeRecyclerView.isVisible = events.isNotEmpty()
+                if (events.isEmpty()) {
+                    showStatusMessage("No se han encontrado eventos para este día y filtro.")
                 }
             }
         }
@@ -59,7 +154,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.isLoading.collect { isLoading ->
                 if (isLoading && viewModel.events.value.isEmpty()) {
-                    showLoadingState()
+                    showStatusMessage("No se han encontrado eventos para este día y filtro.")
                 }
             }
         }
@@ -90,55 +185,19 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
-    private fun displayFeaturedEvent(event: HistoricalEvent) {
-        binding.txtYear.text = event.year
-        binding.txtTitle.text = event.title
-        binding.txtSubtitle.text = "${event.description}"
-        binding.txtBody.text = event.detailedDescription
-
-        val imageUrl = event.imageUrl?.trim()
-        if (!imageUrl.isNullOrEmpty()) {
-            binding.imgFeatured.isVisible = true
-            binding.imgFeatured.load(imageUrl) {
-                crossfade(true)
-                placeholder(android.R.drawable.ic_menu_gallery)
-                error(android.R.drawable.ic_menu_report_image)
-            }
-        } else {
-            binding.imgFeatured.isVisible = false
-        }
-    }
-
-    private fun displayEmptyState() {
-        binding.txtTitle.text = "No hay eventos destacados"
-        binding.txtSubtitle.text = "Consulta la sección de efemérides"
-        binding.txtBody.text =
-            "No se han podido cargar los eventos históricos para hoy."
-        binding.imgFeatured.isVisible = false
-    }
-
-    private fun showLoadingState() {
-        binding.txtTitle.text = "Cargando..."
-        binding.txtSubtitle.text = "Obteniendo eventos históricos"
-        binding.txtBody.text = ""
-        binding.imgFeatured.isVisible = false
-    }
-
-    private fun getCurrentDateSimple(): String {
-        val calendar = Calendar.getInstance()
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-        val month = calendar.get(Calendar.MONTH)
-
-        val monthNames = arrayOf(
-            "enero", "febrero", "marzo", "abril", "mayo", "junio",
-            "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
-        )
-
-        return "$day de ${monthNames[month]}"
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun showStatusMessage(message: String) {
+        Log.d("HomeFragment", "STATUS: $message")
+    }
+
+    private fun navigateToEventDetail(eventId: Int) {
+        val bundle = Bundle().apply {
+            putInt("eventId", eventId)
+        }
+        findNavController().navigate(R.id.action_navigation_home_to_eventDetailFragment, bundle)
     }
 }

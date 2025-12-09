@@ -2,21 +2,18 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:clipToPadding="false"
     android:paddingTop="?attr/actionBarSize"
     android:paddingBottom="16dp"
-    android:paddingStart="16dp"
+    android:paddingStart="8dp"
     android:fitsSystemWindows="true"
-    android:paddingEnd="16dp">
+    android:paddingEnd="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
-        <!-- Imagen. Este atributo android:adjustViewBounds="true" garantiza
-         que la imagen se vea bien ya que la API nos sirve tanto imagenes
-         horizontales como verticales -->
 
         <LinearLayout
             android:id="@+id/date_info"
@@ -73,62 +70,27 @@
 
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/imgFeatured"
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_event_types"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/app_name"
-            android:scaleType="fitCenter"
-            android:src="@drawable/babilonia" />
+            android:layout_marginBottom="16dp"
+            android:background="@android:color/transparent"
+            app:tabTextAppearance="@style/TabTextAppearance.Smaller"
+            app:tabIndicatorColor="@color/primary_red"
+            app:tabIndicatorGravity="bottom"
+            app:tabIndicatorHeight="2dp"
+            app:tabMode="scrollable"
+            app:tabGravity="fill"
+            app:tabTextColor="@color/tab_text_selector"
+            app:tabSelectedTextColor="@color/primary_red" />
 
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/home_events_recycler_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/txtYear"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="start"
-                android:text="2025"
-                android:textSize="25sp"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/txtTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:textStyle="bold"
-            android:textSize="22sp"
-            android:lineSpacingExtra="2dp" />
-
-        <!-- Subtítulo corto -->
-        <TextView
-            android:id="@+id/txtSubtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:textSize="14sp"
-            android:textColor="@android:color/darker_gray" />
-
-        <!-- Texto extenso (explicación/noticia) -->
-        <TextView
-            android:id="@+id/txtBody"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:textSize="16sp"
-            android:lineSpacingExtra="4dp" />
-
+            android:nestedScrollingEnabled="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     </LinearLayout>
 

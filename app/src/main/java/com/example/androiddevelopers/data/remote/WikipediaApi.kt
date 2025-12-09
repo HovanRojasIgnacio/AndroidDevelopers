@@ -6,8 +6,9 @@ import retrofit2.http.Path
 
 interface WikipediaApi {
 
-    @GET("api/rest_v1/feed/onthisday/events/{month}/{day}")
+    @GET("api/rest_v1/feed/onthisday/{type}/{month}/{day}")
     suspend fun getEventsOnThisDay(
+        @Path("type") type: String, // 'events', 'births', 'deaths', o 'holidays'
         @Path("month") month: Int,
         @Path("day") day: Int
     ): Response<WikipediaOnThisDayResponse>

@@ -1,11 +1,19 @@
 package com.example.androiddevelopers.data.remote
 
+import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class WikipediaOnThisDayResponse(
-    val events: List<WikipediaEvent>
+    @SerializedName("events")
+    val events: List<WikipediaEvent>?,
+
+    @SerializedName("births")
+    val births: List<WikipediaEvent>?,
+
+    @SerializedName("deaths")
+    val deaths: List<WikipediaEvent>?
 )
 
 @Serializable

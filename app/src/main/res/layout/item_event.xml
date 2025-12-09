@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
     android:layout_marginTop="8dp"
@@ -15,7 +16,6 @@
     android:focusable="true"
     android:elevation="2dp"
     android:translationZ="2dp">
-
     <!-- Título con mejor estilo -->
     <TextView
         android:id="@+id/event_title"
@@ -46,7 +46,6 @@
 
     </LinearLayout>
 
-    <!-- Línea divisoria elegante -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -54,13 +53,13 @@
         android:layout_marginTop="12dp"
         android:layout_marginBottom="12dp" />
 
-    <!-- Descripción con mejor formato -->
 
     <ImageView
         android:id="@+id/event_image"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        app:srcCompat="@drawable/babilonia" />
+        android:visibility="gone"
+        />
 
     <TextView
         android:id="@+id/event_short_description"

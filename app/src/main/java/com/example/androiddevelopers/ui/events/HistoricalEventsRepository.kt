@@ -1,50 +1,63 @@
-package com.example.androiddevelopers.data.repository
+package com.example.androiddevelopers.ui.events
 
 import com.example.androiddevelopers.data.remote.Apis
 import com.example.androiddevelopers.data.remote.WikipediaApi
 import com.example.androiddevelopers.data.remote.WikipediaEvent
+import com.example.androiddevelopers.data.repository.toDomain
 import com.example.androiddevelopers.domain.HistoricalEvent
 import java.io.IOException
+import java.util.Calendar
 
 class HistoricalEventsRepository(
     // Inyección de dependencias (Práctica 10): Pasamos la API por constructor
     private val api: WikipediaApi = Apis.wikipedia
 ) {
 
-<<<<<<< HEAD
+    private fun buildDetailedDescription(event: WikipediaEvent): String {
+        return "En el año ${event.year}: ${event.text}"
+    }
+
+    /**
+     * Obtiene los eventos de HOY calculando la fecha automáticamente.
+     * Reutiliza getEventsForDate para no duplicar código.
+     */
+    suspend fun getTodayHistoricalEvents(): Result<List<HistoricalEvent>> {
+        val today = Calendar.getInstance()
+        // Calendar.MONTH empieza en 0, por eso sumamos 1
+        return getEventsForDate(
+            EventType.EVENTS,
+            today.get(Calendar.MONTH) + 1, today.get(
+                Calendar.DAY_OF_MONTH
+            )
+        )
+    }
+
     /**
      * Obtiene eventos para una fecha específica.
      * Esta es la función que te faltaba.
      */
     suspend fun getEventsForDate(
-        type: String,
+        eventType: EventType,
         month: Int,
         day: Int
     ): Result<List<HistoricalEvent>> {
         return try {
             // 1. Llamada a la API (Retrofit - Práctica 8)
-            val response = api.getEventsOnThisDay(type, month, day)
-=======
-
-    suspend fun getEventsForDate(type:String, month: Int, day: Int): Result<List<HistoricalEvent>> {
-        return try {
-            // 1. Llamada a la API (Retrofit - Práctica 8)
-            val response = api.getEventsOnThisDay(type,month, day)
->>>>>>> 8cfa21ac30deca7162e0b83d7ff26503ea9da9c8
+            val response = api.getEventsOnThisDay(eventType.apiPath, month, day)
 
             if (response.isSuccessful) {
-                var dtos = emptyList<WikipediaEvent>()
-                if(type.equals("events")){
-                    dtos = response.body()?.events ?: emptyList()
-                }else if(type.equals("births")){
-                    dtos = response.body()?.births ?: emptyList()
-                }else if(type.equals("deaths")){
-                    dtos = response.body()?.deaths ?: emptyList()
+                val body = response.body()
+
+                val dtos = when (eventType) {
+                    EventType.EVENTS -> body?.events ?: emptyList()
+                    EventType.BIRTHS -> body?.births ?: emptyList()
+                    EventType.DEATHS -> body?.deaths ?: emptyList()
                 }
 
-                val events = dtos.mapIndexed { index, dto ->
-                    dto.toDomain(index = index + 1)
-                }
+                val events =
+                    dtos.mapIndexed { index, dto ->
+                        dto.toDomain(index = index + 1)
+                    }
 
                 if (events.isNotEmpty()) {
                     Result.success(events)

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.androiddevelopers.data.repository.HistoricalEventsRepository
 import com.example.androiddevelopers.domain.HistoricalEvent
+import com.example.androiddevelopers.ui.events.EventType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,24 +13,30 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+
 class EventsViewModel : ViewModel() {
     private val repository = HistoricalEventsRepository()
 
-    // --- ESTADO DE FECHA ---
     private val _currentDate = MutableStateFlow(Calendar.getInstance())
     val currentDate: StateFlow<Calendar> = _currentDate.asStateFlow()
-    // ----------------------
 
     private val _events = MutableStateFlow<List<HistoricalEvent>>(emptyList())
     val events: StateFlow<List<HistoricalEvent>> = _events.asStateFlow()
+
+    private val _currentEventType = MutableStateFlow(EventType.EVENTS)
+    val currentEventType: StateFlow<EventType> = _currentEventType.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
 
     private val _error = MutableStateFlow<String?>(null)
-    val error = _error.asStateFlow()
 
     init {
+        setDate(_currentDate.value)
+    }
+
+    fun setDate(newCalendar: Calendar) {
+        _currentDate.value = newCalendar.clone() as Calendar
         loadEvents()
     }
 
@@ -37,14 +44,13 @@ class EventsViewModel : ViewModel() {
         _isLoading.value = true
         _error.value = null
 
-        // Obtener mes y día de la fecha almacenada en el StateFlow
         val calendar = _currentDate.value
         val month = calendar.get(Calendar.MONTH) + 1
         val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val eventType = _currentEventType.value.apiPath
 
         viewModelScope.launch {
-            // val result = repository.getTodayHistoricalEvents()
-            val result = repository.getEventsForDate(month, day)
+            val result = repository.getEventsForDate(eventType, month, day)
 
             if (result.isSuccess) {
                 _events.value = result.getOrNull() ?: emptyList()
@@ -57,27 +63,6 @@ class EventsViewModel : ViewModel() {
         }
     }
 
-    fun goToPreviousDay() {
-        // Clonar la fecha actual, restar un día y actualizar el StateFlow
-        val newDate = _currentDate.value.clone() as Calendar
-        newDate.add(Calendar.DAY_OF_YEAR, -1)
-        _currentDate.value = newDate
-
-        loadEvents() // Recargar los eventos para la nueva fecha
-    }
-
-    fun goToNextDay() {
-        // Clonar la fecha actual, sumar un día y actualizar el StateFlow
-        val newDate = _currentDate.value.clone() as Calendar
-        newDate.add(Calendar.DAY_OF_YEAR, 1)
-        _currentDate.value = newDate
-
-        loadEvents() // Recargar los eventos para la nueva fecha
-    }
-
-    // EventsViewModel.kt
-
-    // Renombrar la función para ser más específica
     fun getFormattedDateComponents(calendar: Calendar): Pair<String, String> {
         val day = calendar.get(Calendar.DAY_OF_MONTH).toString()
 
@@ -94,6 +79,13 @@ class EventsViewModel : ViewModel() {
             }
 
         return Pair(day, monthName) // Retorna el día y el mes
+    }
+
+    fun setEventType(eventType: EventType) {
+        if (_currentEventType.value != eventType) {
+            _currentEventType.value = eventType
+            loadEvents()
+        }
     }
 
     private fun getDefaultEvents(): List<HistoricalEvent> {
@@ -128,7 +120,11 @@ class EventsViewModel : ViewModel() {
         )
     }
 
+<<<<<<< HEAD
+=======
     fun getEventById(id: Int): HistoricalEvent? {
         return _events.value.find { it.id == id }
     }
+
+>>>>>>> 8cfa21ac30deca7162e0b83d7ff26503ea9da9c8
 }

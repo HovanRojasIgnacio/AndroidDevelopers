@@ -15,7 +15,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
 
-    // --- CÓDIGO CLAVE PARA FIJAR ICONO Y TÍTULO ---
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -37,7 +36,6 @@ class MainActivity : AppCompatActivity() {
         )
 
         // 2. Vincular la barra inferior y la barra superior al NavController
-        // NOTA: setupActionBarWithNavController ES NECESARIO AQUÍ
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 

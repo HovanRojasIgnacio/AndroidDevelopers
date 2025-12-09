@@ -12,6 +12,7 @@ import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -21,6 +22,8 @@ import com.example.androiddevelopers.databinding.FragmentHomeBinding
 import com.example.androiddevelopers.presentation.EventsViewModel
 import com.example.androiddevelopers.ui.events.EventType
 import com.example.androiddevelopers.ui.events.HistoricEventAdapter
+import com.example.androiddevelopers.ui.events.HistoricalPeriod
+import com.google.android.material.chip.Chip
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.flow.collectLatest
@@ -39,12 +42,45 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentHomeBinding.bind(view)
+        setupFragmentResultListener()
         tabLayout = view.findViewById(R.id.tab_event_types)
         setupUI()
         setupHomeRecyclerView(view)
         observeEvents()
         observeDate()
         setupMenu()
+        observeActivePeriods()
+    }
+
+    private fun setupFragmentResultListener() {
+        setFragmentResultListener(HistoricalFilterDialogFragment.REQUEST_KEY_PERIODS) { _, bundle ->
+
+            val selectedNames =
+                bundle.getStringArrayList(HistoricalFilterDialogFragment.BUNDLE_KEY_PERIODS)
+
+            Log.d(
+                "FilterDebug",
+                "Nombres de períodos recibidos: $selectedNames"
+            )
+
+            if (selectedNames != null) {
+                val selectedPeriods = selectedNames.mapNotNull { name ->
+                    HistoricalPeriod.entries.find { it.name == name }
+                }.toSet()
+                Log.d(
+                    "FilterDebug",
+                    "Objetos HistoricalPeriod mapeados: $selectedPeriods"
+                )
+                viewModel.updatePeriods(selectedPeriods)
+            }
+        }
+    }
+
+    private fun showHistoricalPeriodFilterDialog() {
+        HistoricalFilterDialogFragment().show(
+            childFragmentManager,
+            HistoricalFilterDialogFragment.TAG
+        )
     }
 
     private fun setupHomeRecyclerView(view: View) {
@@ -69,7 +105,46 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             newDate.add(Calendar.DAY_OF_YEAR, +1)
             viewModel.setDate(newDate)
         }
+
         setupTabLayout()
+    }
+
+    private fun observeActivePeriods() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.activePeriods.collectLatest { periods ->
+                binding.chipActivePeriods.removeAllViews()
+
+                if (periods.isNotEmpty()) {
+                    periods.forEach { period ->
+                        val chip = Chip(requireContext()).apply {
+                            text = period.displayName
+                            isCloseIconVisible = true
+                            // ⭐️ Usar el color del recurso definido en el enum
+                            setChipBackgroundColorResource(period.colorResId)
+                            // Para el texto blanco o negro sobre el chip (ajustar en colors.xml si es necesario)
+                            setTextColor(
+                                resources.getColor(
+                                    R.color.white,
+                                    null
+                                )
+                            )
+
+                            // Listener para eliminar el filtro al hacer clic en la X
+                            setOnCloseIconClickListener {
+                                val current =
+                                    viewModel.activePeriods.value.toMutableSet()
+                                current.remove(period)
+                                viewModel.updatePeriods(current)
+                            }
+                        }
+                        binding.chipActivePeriods.addView(chip)
+                    }
+                    binding.chipActivePeriods.isVisible = true
+                } else {
+                    binding.chipActivePeriods.isVisible = false
+                }
+            }
+        }
     }
 
     private fun setupTabLayout() {
@@ -111,6 +186,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 return when (menuItem.itemId) {
                     R.id.action_calendar -> {
                         showMaterialDatePicker()
+                        true
+                    }
+
+                    R.id.action_filter_period -> {
+                        showHistoricalPeriodFilterDialog()
                         true
                     }
 
@@ -198,6 +278,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val bundle = Bundle().apply {
             putInt("eventId", eventId)
         }
-        findNavController().navigate(R.id.action_navigation_home_to_eventDetailFragment, bundle)
+        findNavController().navigate(
+            R.id.action_navigation_home_to_eventDetailFragment,
+            bundle
+        )
     }
 }

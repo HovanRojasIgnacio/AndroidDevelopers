@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.androidx.ui.text)
     implementation("io.coil-kt:coil:2.6.0")
     implementation("io.coil-kt:coil-svg:2.6.0")
+    implementation(libs.androidx.camera.camera2.pipe)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

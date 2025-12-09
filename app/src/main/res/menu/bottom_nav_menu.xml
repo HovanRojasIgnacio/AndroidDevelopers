@@ -8,11 +8,6 @@
         android:title="@string/title_home" />
 
     <item
-        android:id="@+id/nested_events"
-        android:icon="@drawable/ic_dashboard_black_24dp"
-        android:title="@string/title_events" />
-
-    <item
         android:id="@+id/navigation_game"
         android:icon="@drawable/baseline_videogame_asset_24"
         android:title="@string/title_game" />

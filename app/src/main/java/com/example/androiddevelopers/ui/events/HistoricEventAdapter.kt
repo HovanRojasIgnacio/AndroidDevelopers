@@ -57,8 +57,10 @@ class HistoricEventAdapter :
                 crossfade(true)
                 error(android.R.drawable.ic_menu_report_image)
             }
+            holder.image.visibility = View.VISIBLE
         } else {
             Log.e("CoilError", "URL was null or empty for ${event.title}")
+            holder.image.visibility = View.GONE
         }
         holder.itemView.setOnClickListener {
             onItemClick?.invoke(event)

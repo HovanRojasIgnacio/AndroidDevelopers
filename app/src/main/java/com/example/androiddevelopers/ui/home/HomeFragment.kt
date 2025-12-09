@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.androiddevelopers.R
 import com.example.androiddevelopers.databinding.FragmentHomeBinding
@@ -51,6 +52,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         homeEventsAdapter = HistoricEventAdapter().apply {
             onItemClick = { event ->
                 Log.d("HomeFragment", "Clicked event ID: ${event.id}")
+                navigateToEventDetail(event.id)
             }
         }
         homeRecyclerView.adapter = homeEventsAdapter
@@ -190,5 +192,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun showStatusMessage(message: String) {
         Log.d("HomeFragment", "STATUS: $message")
+    }
+
+    private fun navigateToEventDetail(eventId: Int) {
+        val bundle = Bundle().apply {
+            putInt("eventId", eventId)
+        }
+        findNavController().navigate(R.id.action_navigation_home_to_eventDetailFragment, bundle)
     }
 }

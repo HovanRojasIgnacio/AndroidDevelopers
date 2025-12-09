@@ -93,6 +93,7 @@ class HistoricalFilterDialogFragment : BottomSheetDialogFragment() {
 
     private fun sendResultToHomeFragment(selectedPeriods: Set<HistoricalPeriod>) {
         val periodNames = ArrayList(selectedPeriods.map { it.name })
+        Log.d("FilterDebug", "$periodNames")
         setFragmentResult(
             REQUEST_KEY_PERIODS,
             bundleOf(BUNDLE_KEY_PERIODS to periodNames)

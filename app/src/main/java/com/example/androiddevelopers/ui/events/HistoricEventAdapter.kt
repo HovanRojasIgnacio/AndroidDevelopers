@@ -57,7 +57,6 @@ class HistoricEventAdapter :
             holder.image.load(imageUrl) {
                 crossfade(true)
                 error(android.R.drawable.ic_menu_report_image)
-                Log.d("Ñ", "$imageUrl")
             }
             holder.image.visibility = View.VISIBLE
         } else {

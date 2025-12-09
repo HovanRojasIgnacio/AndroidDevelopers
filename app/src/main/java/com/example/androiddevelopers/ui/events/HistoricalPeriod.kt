@@ -25,7 +25,7 @@ enum class HistoricalPeriod(
         com.example.androiddevelopers.R.color.era_modern
     ),
     CONTEMPORARY(
-        "Historia Contemporánea",
+        "Edad Contemporánea",
         1789,
         2025,
         com.example.androiddevelopers.R.color.era_contemporary

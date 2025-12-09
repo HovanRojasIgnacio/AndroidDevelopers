@@ -11,7 +11,6 @@ class HistoricalEventsRepository(
     private val api: WikipediaApi = Apis.wikipedia
 ) {
 
-<<<<<<< HEAD
     /**
      * Obtiene eventos para una fecha específica.
      * Esta es la función que te faltaba.
@@ -24,13 +23,6 @@ class HistoricalEventsRepository(
         return try {
             // 1. Llamada a la API (Retrofit - Práctica 8)
             val response = api.getEventsOnThisDay(type, month, day)
-=======
-
-    suspend fun getEventsForDate(type:String, month: Int, day: Int): Result<List<HistoricalEvent>> {
-        return try {
-            // 1. Llamada a la API (Retrofit - Práctica 8)
-            val response = api.getEventsOnThisDay(type,month, day)
->>>>>>> 8cfa21ac30deca7162e0b83d7ff26503ea9da9c8
 
             if (response.isSuccessful) {
                 var dtos = emptyList<WikipediaEvent>()

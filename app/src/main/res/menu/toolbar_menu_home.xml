@@ -6,5 +6,6 @@
         android:id="@+id/action_calendar"
         android:icon="@drawable/baseline_calendar_month_24"
         android:title="Seleccionar Día"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"
+        app:iconTint="@color/toolbar_icon_color"/>
 </menu>

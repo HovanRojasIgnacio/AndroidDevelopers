@@ -45,11 +45,20 @@ class HistoricEventAdapter :
         return EventViewHolder(view)
     }
 
+    /* Para hacer que la primera letra de la descripciçon sea mayçuscula */
+    fun String.capitalizeFirstLetter(): String {
+        return if (this.isNotEmpty()) {
+            this.substring(0, 1).uppercase() + this.substring(1)
+        } else {
+            this
+        }
+    }
+
     override fun onBindViewHolder(holder: EventViewHolder, position: Int) {
         val event = events[position]
         holder.title.text = event.title
         holder.date.text = event.year
-        holder.shortDescription.text = event.description
+        holder.shortDescription.text = event.description.capitalizeFirstLetter()
         val imageUrl = event.imageUrl
         Log.d("Ñ", "$imageUrl")
 

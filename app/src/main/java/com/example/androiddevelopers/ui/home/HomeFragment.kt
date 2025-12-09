@@ -54,23 +54,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun setupFragmentResultListener() {
         setFragmentResultListener(HistoricalFilterDialogFragment.REQUEST_KEY_PERIODS) { _, bundle ->
-
             val selectedNames =
                 bundle.getStringArrayList(HistoricalFilterDialogFragment.BUNDLE_KEY_PERIODS)
-
-            Log.d(
-                "FilterDebug",
-                "Nombres de períodos recibidos: $selectedNames"
-            )
-
             if (selectedNames != null) {
                 val selectedPeriods = selectedNames.mapNotNull { name ->
                     HistoricalPeriod.entries.find { it.name == name }
                 }.toSet()
-                Log.d(
-                    "FilterDebug",
-                    "Objetos HistoricalPeriod mapeados: $selectedPeriods"
-                )
                 viewModel.updatePeriods(selectedPeriods)
             }
         }
@@ -87,7 +76,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         homeRecyclerView = view.findViewById(R.id.home_events_recycler_list)
         homeEventsAdapter = HistoricEventAdapter().apply {
             onItemClick = { event ->
-                Log.d("HomeFragment", "Clicked event ID: ${event.id}")
                 navigateToEventDetail(event.id)
             }
         }
@@ -143,42 +131,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
-    /*private fun setupTabLayout() {
-        EventType.entries.forEachIndexed { index, eventType ->
-            tabLayout.addTab(
-                tabLayout.newTab().setText(eventType.typeName).setTag(eventType)
-            )
-        }
-
-        tabLayout.addOnTabSelectedListener(object :
-            TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                val eventType = tab.tag as? EventType
-                if (eventType != null) {
-                    // Llamar al ViewModel para cambiar el filtro y recargar los datos
-                    viewModel.setEventType(eventType)
-                }
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab) {}
-            override fun onTabReselected(tab: TabLayout.Tab) {}
-        })
-
-        val initialType = EventType.EVENTS
-        val initialTab =
-            tabLayout.getTabAt(EventType.entries.indexOf(initialType))
-        initialTab?.select()
-    }*/
-
     private fun observeCurrentEventType() {
         viewLifecycleOwner.lifecycleScope.launch {
-            // Recoge el estado actual del tipo de evento del ViewModel
             viewModel.currentEventType.collectLatest { eventType ->
-
-                // Convierte el EventType (enum) en el índice de la pestaña
                 val tabIndex = EventType.entries.indexOf(eventType)
-
-                // ⭐️ SINCRONIZAR UI: Si el índice es válido y la pestaña no está seleccionada, selecciónala.
                 if (tabIndex != -1 && tabLayout.selectedTabPosition != tabIndex) {
                     val tab = tabLayout.getTabAt(tabIndex)
                     tab?.select()
@@ -188,30 +144,24 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private fun setupTabLayout() {
-        // 1. ⚙️ Añadir todas las pestañas según los tipos de evento
-        // (Este bucle se mantiene igual, ya que construye la estructura visual)
         EventType.entries.forEach { eventType ->
             tabLayout.addTab(
                 tabLayout.newTab()
                     .setText(eventType.typeName)
-                    .setTag(eventType) // Usamos el enum como etiqueta para fácil referencia
+                    .setTag(eventType)
             )
         }
-
-        // 2. 👂 Configurar el Listener para manejar los clics del usuario
         tabLayout.addOnTabSelectedListener(object :
             TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 val eventType = tab.tag as? EventType
                 if (eventType != null) {
-                    // ⭐️ Llama al ViewModel para cambiar el filtro y cargar los datos
                     viewModel.setEventType(eventType)
                 }
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {}
 
-            // 💡 Opcional: Útil para forzar la recarga si el usuario toca la misma pestaña
             override fun onTabReselected(tab: TabLayout.Tab) {
                 val eventType = tab.tag as? EventType
                 if (eventType != null) {
@@ -220,22 +170,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             }
         })
 
-        // 3. 🔄 Sincronizar con el Estado Persistente del ViewModel
-
-        // Obtener el tipo de evento actual persistido en el ViewModel (ej: Fallecimientos)
         val currentType = viewModel.currentEventType.value
-
-        // Encontrar la posición de esa pestaña
         val initialTabIndex = EventType.entries.indexOf(currentType)
-
-        // Seleccionar la pestaña persistida. Si el índice no es -1 y la pestaña existe, la seleccionamos.
         if (initialTabIndex != -1) {
             val initialTab = tabLayout.getTabAt(initialTabIndex)
-            initialTab?.select() // ⭐️ Esta línea asegura que la UI refleje el estado
+            initialTab?.select()
         }
     }
 
-    // Configuración del menú de la Toolbar (barra superior)
     private fun setupMenu() {
 
         requireActivity().addMenuProvider(object : MenuProvider {

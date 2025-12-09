@@ -4,7 +4,6 @@ import com.example.androiddevelopers.data.remote.Apis
 import com.example.androiddevelopers.data.remote.WikipediaApi
 import com.example.androiddevelopers.domain.HistoricalEvent
 import java.io.IOException
-import java.util.Calendar
 
 class HistoricalEventsRepository(
     // Inyección de dependencias (Práctica 10): Pasamos la API por constructor
@@ -12,23 +11,17 @@ class HistoricalEventsRepository(
 ) {
 
     /**
-     * Obtiene los eventos de HOY calculando la fecha automáticamente.
-     * Reutiliza getEventsForDate para no duplicar código.
-     */
-    suspend fun getTodayHistoricalEvents(): Result<List<HistoricalEvent>> {
-        val today = Calendar.getInstance()
-        // Calendar.MONTH empieza en 0, por eso sumamos 1
-        return getEventsForDate(today.get(Calendar.MONTH) + 1, today.get(Calendar.DAY_OF_MONTH))
-    }
-
-    /**
      * Obtiene eventos para una fecha específica.
      * Esta es la función que te faltaba.
      */
-    suspend fun getEventsForDate(month: Int, day: Int): Result<List<HistoricalEvent>> {
+    suspend fun getEventsForDate(
+        type: String,
+        month: Int,
+        day: Int
+    ): Result<List<HistoricalEvent>> {
         return try {
             // 1. Llamada a la API (Retrofit - Práctica 8)
-            val response = api.getEventsOnThisDay(month, day)
+            val response = api.getEventsOnThisDay(type, month, day)
 
             if (response.isSuccessful) {
                 val dtos = response.body()?.events ?: emptyList()
@@ -42,7 +35,7 @@ class HistoricalEventsRepository(
                 } else {
                     Result.success(getDefaultEvents())
                 }
-            }else {
+            } else {
                 Result.success(getDefaultEvents())
             }
         } catch (e: IOException) {

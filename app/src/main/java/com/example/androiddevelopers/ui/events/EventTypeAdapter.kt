@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.androiddevelopers.R
 
-// 1. Definición del Enum para los tipos de evento (usado en el ViewModel)
 enum class EventType(val typeName: String, val apiPath: String) {
     EVENTS("Eventos", "events"),
     BIRTHS("Nacimientos", "births"),

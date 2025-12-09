@@ -7,13 +7,13 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class WikipediaOnThisDayResponse(
     @SerializedName("events")
-    val events: List<WikipediaEvent>,
+    val events: List<WikipediaEvent>?,
 
     @SerializedName("births")
-    val births: List<WikipediaEvent>,
-    
+    val births: List<WikipediaEvent>?,
+
     @SerializedName("deaths")
-    val deaths: List<WikipediaEvent>
+    val deaths: List<WikipediaEvent>?
 )
 
 @Serializable

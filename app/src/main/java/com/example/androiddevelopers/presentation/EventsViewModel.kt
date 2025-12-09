@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.androiddevelopers.data.repository.HistoricalEventsRepository
 import com.example.androiddevelopers.domain.HistoricalEvent
+import com.example.androiddevelopers.ui.events.EventType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,6 +12,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+
 
 class EventsViewModel : ViewModel() {
     private val repository = HistoricalEventsRepository()
@@ -28,7 +30,6 @@ class EventsViewModel : ViewModel() {
     val isLoading = _isLoading.asStateFlow()
 
     private val _error = MutableStateFlow<String?>(null)
-    val error = _error.asStateFlow()
 
     init {
         setDate(_currentDate.value)
@@ -80,7 +81,6 @@ class EventsViewModel : ViewModel() {
         return Pair(day, monthName) // Retorna el día y el mes
     }
 
-<<<<<<< HEAD:app/src/main/java/com/example/androiddevelopers/ui/events/EventsViewModel.kt
     fun setEventType(eventType: EventType) {
         if (_currentEventType.value != eventType) {
             _currentEventType.value = eventType
@@ -88,10 +88,7 @@ class EventsViewModel : ViewModel() {
         }
     }
 
-    private fun getDefaultEvents(): List<HistoricEvent> {
-=======
     private fun getDefaultEvents(): List<HistoricalEvent> {
->>>>>>> origin/master:app/src/main/java/com/example/androiddevelopers/presentation/EventsViewModel.kt
         return listOf(
             HistoricalEvent(
                 id = 1,
@@ -123,10 +120,4 @@ class EventsViewModel : ViewModel() {
         )
     }
 
-<<<<<<< HEAD:app/src/main/java/com/example/androiddevelopers/ui/events/EventsViewModel.kt
-=======
-    fun getEventById(id: Int): HistoricalEvent? {
-        return _events.value.find { it.id == id }
-    }
->>>>>>> origin/master:app/src/main/java/com/example/androiddevelopers/presentation/EventsViewModel.kt
 }

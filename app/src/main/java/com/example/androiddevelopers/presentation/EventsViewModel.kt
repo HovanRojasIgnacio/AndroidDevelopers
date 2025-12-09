@@ -120,11 +120,9 @@ class EventsViewModel : ViewModel() {
         )
     }
 
-<<<<<<< HEAD
-=======
     fun getEventById(id: Int): HistoricalEvent? {
         return _events.value.find { it.id == id }
     }
 
->>>>>>> 8cfa21ac30deca7162e0b83d7ff26503ea9da9c8
+
 }

@@ -7,7 +7,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AnimationUtils
-import android.widget.LinearLayout
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -119,9 +118,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         val chip = Chip(requireContext()).apply {
                             text = period.displayName
                             isCloseIconVisible = true
-                            // ⭐️ Usar el color del recurso definido en el enum
                             setChipBackgroundColorResource(period.colorResId)
-                            // Para el texto blanco o negro sobre el chip (ajustar en colors.xml si es necesario)
                             setTextColor(
                                 resources.getColor(
                                     R.color.white,
@@ -174,7 +171,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         initialTab?.select()
     }
 
-    // Configuración del menú de la Toolbar
+    // Configuración del menú de la Toolbar (barra superior)
     private fun setupMenu() {
 
         requireActivity().addMenuProvider(object : MenuProvider {
@@ -241,25 +238,13 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private fun observeDate() {
-        // Necesitas una referencia al contenedor de la fecha para animarlo
-        val dateContainer =
-            binding.root.findViewById<LinearLayout>(R.id.date_info) // Si le diste un ID
-
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.currentDate.collectLatest { calendar ->
-
-                // 1. Obtener los componentes de fecha
                 val (day, month) = viewModel.getFormattedDateComponents(calendar)
-
-                // 2. Aplicar animación al TextView del día
                 val anim =
                     AnimationUtils.loadAnimation(context, R.anim.slide_down)
-
-                // 3. Actualizar el texto
                 binding.txtDay.text = day
                 binding.txtMonth.text = month
-
-                // 4. Iniciar la animación
                 binding.txtDay.startAnimation(anim)
             }
         }

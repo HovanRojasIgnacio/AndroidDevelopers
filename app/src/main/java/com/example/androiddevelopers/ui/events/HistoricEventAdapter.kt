@@ -51,11 +51,13 @@ class HistoricEventAdapter :
         holder.date.text = event.year
         holder.shortDescription.text = event.description
         val imageUrl = event.imageUrl
+        Log.d("Ñ", "$imageUrl")
 
         if (!imageUrl.isNullOrEmpty()) {
             holder.image.load(imageUrl) {
                 crossfade(true)
                 error(android.R.drawable.ic_menu_report_image)
+                Log.d("Ñ", "$imageUrl")
             }
             holder.image.visibility = View.VISIBLE
         } else {

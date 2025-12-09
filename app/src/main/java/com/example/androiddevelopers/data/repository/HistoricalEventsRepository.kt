@@ -18,7 +18,7 @@ class HistoricalEventsRepository(
     // Inyección de dependencias (Práctica 10): Pasamos la API por constructor
     private val api: WikipediaApi = Apis.wikipedia
 ) {
-    
+
     /**
      * Obtiene eventos para una fecha específica.
      * Esta es la función que te faltaba.

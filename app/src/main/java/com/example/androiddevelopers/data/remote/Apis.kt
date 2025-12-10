@@ -18,7 +18,7 @@ object Apis {
         interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS)
     }
 
-    val client = OkHttpClient.Builder()
+    /*val client = OkHttpClient.Builder()
         .addInterceptor(interceptorLog)
         .addInterceptor { chain ->
             val originalRequest = chain.request()
@@ -30,6 +30,36 @@ object Apis {
                 .header("Accept", "application/json")
                 .build()
             chain.proceed(requestWithUserAgent)
+        }
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .retryOnConnectionFailure(true)
+        .build()*/
+
+    val client = OkHttpClient.Builder()
+        .addInterceptor(interceptorLog)
+
+        // ⭐️ REINTRODUCCIÓN DE LA LÓGICA DE REFERER (FIX 403)
+        .addInterceptor { chain ->
+            val originalRequest = chain.request()
+            val builder = originalRequest.newBuilder()
+            builder.header(
+                "User-Agent",
+                "Mozilla/5.0(Linux;Android 10, K) AppleWebKit/537.36 (KHTML, like Gecko)Chrome/114.0.0.0 Mobile Safari/537.36"
+            )
+            builder.header("Accept", "application/json")
+
+            // 2. Referer Condicional
+            val urlHost = originalRequest.url.host
+
+            // Aplica Referer SOLAMENTE a URLs de descarga de imagen (upload.wikimedia.org)
+            if (urlHost.contains("upload.wikimedia.org")) {
+                builder.header("Referer", "https://es.wikipedia.org/")
+            }
+
+            val requestWithHeaders = builder.build()
+            chain.proceed(requestWithHeaders)
         }
         .connectTimeout(30, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)

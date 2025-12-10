@@ -7,11 +7,11 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AnimationUtils
-import android.widget.LinearLayout
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -21,6 +21,8 @@ import com.example.androiddevelopers.databinding.FragmentHomeBinding
 import com.example.androiddevelopers.presentation.EventsViewModel
 import com.example.androiddevelopers.ui.events.EventType
 import com.example.androiddevelopers.ui.events.HistoricEventAdapter
+import com.example.androiddevelopers.ui.events.HistoricalPeriod
+import com.google.android.material.chip.Chip
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.flow.collectLatest
@@ -40,18 +42,40 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentHomeBinding.bind(view)
         tabLayout = view.findViewById(R.id.tab_event_types)
+        setupFragmentResultListener()
         setupUI()
         setupHomeRecyclerView(view)
         observeEvents()
         observeDate()
         setupMenu()
+        observeActivePeriods()
+        observeCurrentEventType()
+    }
+
+    private fun setupFragmentResultListener() {
+        setFragmentResultListener(HistoricalFilterDialogFragment.REQUEST_KEY_PERIODS) { _, bundle ->
+            val selectedNames =
+                bundle.getStringArrayList(HistoricalFilterDialogFragment.BUNDLE_KEY_PERIODS)
+            if (selectedNames != null) {
+                val selectedPeriods = selectedNames.mapNotNull { name ->
+                    HistoricalPeriod.entries.find { it.name == name }
+                }.toSet()
+                viewModel.updatePeriods(selectedPeriods)
+            }
+        }
+    }
+
+    private fun showHistoricalPeriodFilterDialog() {
+        HistoricalFilterDialogFragment().show(
+            parentFragmentManager,
+            HistoricalFilterDialogFragment.TAG
+        )
     }
 
     private fun setupHomeRecyclerView(view: View) {
         homeRecyclerView = view.findViewById(R.id.home_events_recycler_list)
         homeEventsAdapter = HistoricEventAdapter().apply {
             onItemClick = { event ->
-                Log.d("HomeFragment", "Clicked event ID: ${event.id}")
                 navigateToEventDetail(event.id)
             }
         }
@@ -69,37 +93,91 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             newDate.add(Calendar.DAY_OF_YEAR, +1)
             viewModel.setDate(newDate)
         }
+
         setupTabLayout()
     }
 
+    private fun observeActivePeriods() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.activePeriods.collectLatest { periods ->
+                binding.chipActivePeriods.removeAllViews()
+
+                if (periods.isNotEmpty()) {
+                    periods.forEach { period ->
+                        val chip = Chip(requireContext()).apply {
+                            text = period.displayName
+                            isCloseIconVisible = true
+                            setChipBackgroundColorResource(period.colorResId)
+                            setTextColor(
+                                resources.getColor(
+                                    R.color.white,
+                                    null
+                                )
+                            )
+                            setOnCloseIconClickListener {
+                                val current =
+                                    viewModel.activePeriods.value.toMutableSet()
+                                current.remove(period)
+                                viewModel.updatePeriods(current)
+                            }
+                        }
+                        binding.chipActivePeriods.addView(chip)
+                    }
+                    binding.chipActivePeriods.isVisible = true
+                } else {
+                    binding.chipActivePeriods.isVisible = false
+                }
+            }
+        }
+    }
+
+    private fun observeCurrentEventType() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.currentEventType.collectLatest { eventType ->
+                val tabIndex = EventType.entries.indexOf(eventType)
+                if (tabIndex != -1 && tabLayout.selectedTabPosition != tabIndex) {
+                    val tab = tabLayout.getTabAt(tabIndex)
+                    tab?.select()
+                }
+            }
+        }
+    }
+
     private fun setupTabLayout() {
-        EventType.entries.forEachIndexed { index, eventType ->
+        EventType.entries.forEach { eventType ->
             tabLayout.addTab(
-                tabLayout.newTab().setText(eventType.typeName).setTag(eventType)
+                tabLayout.newTab()
+                    .setText(eventType.typeName)
+                    .setTag(eventType)
             )
         }
-
         tabLayout.addOnTabSelectedListener(object :
             TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 val eventType = tab.tag as? EventType
                 if (eventType != null) {
-                    // Llamar al ViewModel para cambiar el filtro y recargar los datos
                     viewModel.setEventType(eventType)
                 }
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {}
-            override fun onTabReselected(tab: TabLayout.Tab) {}
+
+            override fun onTabReselected(tab: TabLayout.Tab) {
+                val eventType = tab.tag as? EventType
+                if (eventType != null) {
+                    viewModel.setEventType(eventType)
+                }
+            }
         })
 
-        val initialType = EventType.EVENTS
-        val initialTab =
-            tabLayout.getTabAt(EventType.entries.indexOf(initialType))
-        initialTab?.select()
+        val currentType = viewModel.currentEventType.value
+        val initialTabIndex = EventType.entries.indexOf(currentType)
+        if (initialTabIndex != -1) {
+            val initialTab = tabLayout.getTabAt(initialTabIndex)
+            initialTab?.select()
+        }
     }
 
-    // Configuración del menú de la Toolbar
     private fun setupMenu() {
 
         requireActivity().addMenuProvider(object : MenuProvider {
@@ -111,6 +189,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 return when (menuItem.itemId) {
                     R.id.action_calendar -> {
                         showMaterialDatePicker()
+                        true
+                    }
+
+                    R.id.action_filter_period -> {
+                        showHistoricalPeriodFilterDialog()
                         true
                     }
 
@@ -161,25 +244,13 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private fun observeDate() {
-        // Necesitas una referencia al contenedor de la fecha para animarlo
-        val dateContainer =
-            binding.root.findViewById<LinearLayout>(R.id.date_info) // Si le diste un ID
-
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.currentDate.collectLatest { calendar ->
-
-                // 1. Obtener los componentes de fecha
                 val (day, month) = viewModel.getFormattedDateComponents(calendar)
-
-                // 2. Aplicar animación al TextView del día
                 val anim =
                     AnimationUtils.loadAnimation(context, R.anim.slide_down)
-
-                // 3. Actualizar el texto
                 binding.txtDay.text = day
                 binding.txtMonth.text = month
-
-                // 4. Iniciar la animación
                 binding.txtDay.startAnimation(anim)
             }
         }
@@ -198,6 +269,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val bundle = Bundle().apply {
             putInt("eventId", eventId)
         }
-        findNavController().navigate(R.id.action_navigation_home_to_eventDetailFragment, bundle)
+        findNavController().navigate(
+            R.id.action_navigation_home_to_eventDetailFragment,
+            bundle
+        )
     }
 }

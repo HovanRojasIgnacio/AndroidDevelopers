@@ -21,4 +21,11 @@
     <color name="black_background">#FF121212</color>
     <color name="dark_surface">#FF1F1F1F</color>
 
+    // Colores para el filtro por épocas históricas
+    <color name="era_ancient">#FF3498DB</color>
+    <color name="era_middle_ages">#FF2ECC71</color>
+    <color name="era_modern">#FFF1C40F</color>
+    <color name="era_contemporary">#FFE74C3C</color>
+    <color name="era_prehistory">#FF9B59B6</color>
+
 </resources>

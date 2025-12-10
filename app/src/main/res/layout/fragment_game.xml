@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:padding="16dp"
     android:fitsSystemWindows="true"
+    android:background="@color/screen_background"
     tools:context=".ui.game.GameFragment">
 
     <LinearLayout
@@ -21,6 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Select a Game"
+            android:textColor="@color/text_primary"
             android:textSize="24sp" />
 
         <TextView
@@ -30,6 +32,7 @@
             android:layout_marginTop="16dp"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/text_secondary"
             android:visibility="gone"
             tools:text="Last Score: 10"
             tools:visibility="visible" />
@@ -77,6 +80,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
                 android:textStyle="bold"
+                android:textColor="@color/text_primary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Score: 0"
@@ -89,6 +93,7 @@
                 android:layout_marginTop="32dp"
                 android:textAlignment="center"
                 android:textSize="22sp"
+                android:textColor="@color/text_primary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_score"

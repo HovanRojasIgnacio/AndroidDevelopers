@@ -3,9 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_filter_period"
+        android:icon="@drawable/ic_filter_list"
+        android:title="Filtrar por Época"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/action_calendar"
         android:icon="@drawable/baseline_calendar_month_24"
         android:title="Seleccionar Día"
         app:showAsAction="ifRoom"
         app:iconTint="@color/toolbar_icon_color"/>
+        app:showAsAction="ifRoom" />
+
 </menu>

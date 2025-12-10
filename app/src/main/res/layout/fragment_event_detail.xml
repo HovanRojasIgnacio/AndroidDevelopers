@@ -18,8 +18,8 @@
             android:text="Título del Evento"
             android:textSize="24sp"
             android:textStyle="bold"
+            android:layout_marginTop="22dp"
             android:textColor="@color/text_primary"
-            android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp" />
 
         <TextView

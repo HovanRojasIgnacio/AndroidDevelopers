@@ -26,7 +26,6 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val switchDarkMode = view.findViewById<SwitchMaterial>(R.id.switch_dark_mode)
-        val switchNotifications = view.findViewById<SwitchMaterial>(R.id.switch_notifications)
         val btnLogout = view.findViewById<Button>(R.id.btn_logout)
 
         val settingsManager = SettingsManager(requireContext())
@@ -53,13 +52,7 @@ class SettingsFragment : Fragment() {
         }
 
 
-        switchNotifications.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                Toast.makeText(context, "Notificaciones activadas", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(context, "Notificaciones desactivadas", Toast.LENGTH_SHORT).show()
-            }
-        }
+
 
 
         btnLogout.setOnClickListener {

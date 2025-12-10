@@ -24,14 +24,7 @@
         android:textSize="18sp"
         android:layout_marginBottom="16dp"/>
 
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/switch_notifications"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:checked="true"
-        android:text="Notificaciones"
-        android:textColor="@color/text_primary"
-        android:textSize="18sp" />
+
 
     <Button
         android:id="@+id/btn_logout"

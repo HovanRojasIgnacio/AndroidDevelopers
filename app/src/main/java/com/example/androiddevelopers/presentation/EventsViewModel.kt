@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.androiddevelopers.data.repository.HistoricalEventsRepository
 import com.example.androiddevelopers.domain.HistoricalEvent
 import com.example.androiddevelopers.ui.events.EventType
+import com.example.androiddevelopers.ui.events.HistoricalPeriod
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,6 +31,17 @@ class EventsViewModel : ViewModel() {
     val isLoading = _isLoading.asStateFlow()
 
     private val _error = MutableStateFlow<String?>(null)
+
+    /** Guarda la lista completa de eventos cargados de la API para el día y EventType actual,
+     * antes de aplicar el filtro de época (HistoricalPeriod). */
+    private val _rawEventsFromApi =
+        MutableStateFlow<List<HistoricalEvent>>(emptyList())
+
+    // Guarda el conjunto de épocas históricas seleccionadas por el usuario
+    private val _activePeriods =
+        MutableStateFlow<Set<HistoricalPeriod>>(emptySet())
+    val activePeriods: StateFlow<Set<HistoricalPeriod>> =
+        _activePeriods.asStateFlow()
 
     init {
         setDate(_currentDate.value)
@@ -61,6 +73,39 @@ class EventsViewModel : ViewModel() {
             }
             _isLoading.value = false
         }
+    }
+
+    /* Actualiza los filtros de época */
+    fun updatePeriods(selectedPeriods: Set<HistoricalPeriod>) {
+        _activePeriods.value = selectedPeriods
+        // Filtra los datos brutos con los nuevos periodos
+        filterEventsByPeriod(_rawEventsFromApi.value, selectedPeriods)
+    }
+
+    /* Aplica el filtro de época a una lista de eventos */
+    private fun filterEventsByPeriod(
+        rawEvents: List<HistoricalEvent>,
+        periods: Set<HistoricalPeriod>
+    ) {
+        if (periods.isEmpty()) {
+            _events.value = rawEvents
+            return
+        }
+
+        val filteredEvents = rawEvents.filter { event ->
+            val rawYearString =
+                event.year.split(" ").firstOrNull() ?: return@filter false
+            val isBC = event.year.contains("a. C.", ignoreCase = true)
+            val numericYear =
+                rawYearString.filter { it.isDigit() }.toIntOrNull()
+                    ?: return@filter false
+            val eventYear = if (isBC) -numericYear else numericYear
+            periods.any { period ->
+                // ⭐️ El filtro ahora funciona con números positivos y negativos
+                eventYear >= period.startYear && eventYear <= period.endYear
+            }
+        }
+        _events.value = filteredEvents
     }
 
     fun getFormattedDateComponents(calendar: Calendar): Pair<String, String> {

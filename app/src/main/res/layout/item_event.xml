@@ -16,18 +16,17 @@
     android:focusable="true"
     android:elevation="2dp"
     android:translationZ="2dp">
-    <!-- Título con mejor estilo -->
+
     <TextView
         android:id="@+id/event_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:textColor="#2C3E50"
+        android:textColor="@color/text_primary"
         android:text="Título del evento"
         android:drawablePadding="8dp" />
 
-    <!-- Fecha con icono -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="13sp"
-            android:textColor="#7F8C8D"
+            android:textColor="@color/text_secondary"
             android:text="Fecha del evento"
             android:drawablePadding="4dp" />
 
@@ -66,8 +65,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:lineSpacingExtra="2sp"
-        android:text="Descripción corta del evento histórico que aparece en la lista"
-        android:textColor="#34495E"
+        android:text="Descripción corta..."
+        android:textColor="@color/text_body"
         android:layout_marginTop="12dp"
         android:textSize="14sp" />
 

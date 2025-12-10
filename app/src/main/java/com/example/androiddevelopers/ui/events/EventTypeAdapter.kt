@@ -9,11 +9,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.androiddevelopers.R
 
-enum class EventType(val typeName: String, val apiPath: String) {
-    EVENTS("Eventos", "events"),
-    BIRTHS("Nacimientos", "births"),
-    DEATHS("Fallecimientos", "deaths")
-}
 
 // 2. La Clase Adaptadora (Adapter) para el RecyclerView
 class EventTypeAdapter(private val onTypeClicked: (EventType) -> Unit) :

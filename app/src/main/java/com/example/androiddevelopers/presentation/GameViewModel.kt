@@ -3,9 +3,13 @@ package com.example.androiddevelopers.presentation
 import androidx.lifecycle.ViewModel
 import com.example.androiddevelopers.domain.Question
 import com.example.androiddevelopers.data.local.QuestionDao
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class GameViewModel(private val questionDao: QuestionDao) : ViewModel() {
 
+    private val auth = FirebaseAuth.getInstance()
+    private val db = FirebaseFirestore.getInstance()
     // Public properties to hold the game state. The Fragment will read these.
     var isGameActive: Boolean = false
         private set // Can only be changed from within the ViewModel

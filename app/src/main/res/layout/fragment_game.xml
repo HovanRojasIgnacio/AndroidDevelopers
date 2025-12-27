@@ -58,55 +58,6 @@
             android:text="Crear cuenta nueva" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/button_show_ranking"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Ver Ranking Global"
-        android:layout_marginBottom="16dp"/>
-
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/ranking_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        android:background="@color/screen_background"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ranking Global"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_marginBottom="24dp"/>
-
-            <TextView
-                android:id="@+id/text_ranking_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Cargando ranking..."
-                android:textSize="16sp"
-                android:lineSpacingExtra="8dp"/>
-
-            <Button
-                android:id="@+id/button_back_from_ranking"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Volver"
-                android:layout_gravity="center"
-                android:layout_marginTop="32dp"/>
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
-
     <LinearLayout
         android:id="@+id/game_selection_container"
         android:layout_width="match_parent"

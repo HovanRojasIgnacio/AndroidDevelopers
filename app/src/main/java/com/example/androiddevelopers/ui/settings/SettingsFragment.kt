@@ -11,8 +11,13 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.example.androiddevelopers.R
 import com.google.android.material.switchmaterial.SwitchMaterial
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 
 class SettingsFragment : Fragment() {
+
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -24,6 +29,8 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        auth = Firebase.auth
 
         val switchDarkMode = view.findViewById<SwitchMaterial>(R.id.switch_dark_mode)
         val btnLogout = view.findViewById<Button>(R.id.btn_logout)
@@ -51,12 +58,11 @@ class SettingsFragment : Fragment() {
             AppCompatDelegate.setDefaultNightMode(newMode)
         }
 
-
-
-
-
         btnLogout.setOnClickListener {
-            Toast.makeText(context, "Cerrando sesión...", Toast.LENGTH_SHORT).show()
+            auth.signOut()
+
+            Toast.makeText(context, "Sesión cerrada correctamente", Toast.LENGTH_SHORT).show()
+
         }
     }
 }

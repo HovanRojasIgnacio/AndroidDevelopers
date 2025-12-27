@@ -35,7 +35,7 @@ class GameFragment : Fragment(R.layout.fragment_game) {
 
     // Firebase
     private lateinit var auth: FirebaseAuth
-    private val db = FirebaseFirestore.getInstance() // Instancia de Firestore
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -61,7 +61,6 @@ class GameFragment : Fragment(R.layout.fragment_game) {
         val buttonB = view.findViewById<Button>(R.id.button_option_b)
         val buttonC = view.findViewById<Button>(R.id.button_option_c)
 
-        // --- LISTENERS ---
 
         // Login
         btnLogin.setOnClickListener {
@@ -75,7 +74,7 @@ class GameFragment : Fragment(R.layout.fragment_game) {
             }
         }
 
-        // Registro (Nuevo)
+        // Registro
         btnRegister.setOnClickListener {
             val email = emailApp.text.toString()
             val password = passApp.text.toString()
@@ -102,7 +101,7 @@ class GameFragment : Fragment(R.layout.fragment_game) {
 
         // Finalizar juego (Ahora guarda en Firestore)
         buttonFinishGame.setOnClickListener {
-            saveScoreToFirebase() // Guardamos antes de cerrar
+            saveScoreToFirebase()
             viewModel.finishCurrentGame()
             updateUi()
         }
@@ -140,7 +139,7 @@ class GameFragment : Fragment(R.layout.fragment_game) {
         }
     }
 
-    // Método para guardar según la página 25 de las diapositivas
+    // para guardar datos en Firebase
     private fun saveScoreToFirebase() {
         val email = auth.currentUser?.email ?: return
         if (viewModel.score == 0) return

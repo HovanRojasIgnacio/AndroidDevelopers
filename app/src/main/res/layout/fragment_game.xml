@@ -56,15 +56,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Crear cuenta nueva" />
+
     </LinearLayout>
 
-    <Button
-        android:id="@+id/button_show_ranking"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Ver Ranking Global"
-        android:layout_marginBottom="16dp"/>
+
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/ranking_container"
@@ -110,11 +105,25 @@
     <LinearLayout
         android:id="@+id/game_selection_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
+        android:layout_height="match_parent"
         android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/button_show_ranking"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ver Ranking Global"
+            android:layout_marginTop="16dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -148,6 +157,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Geography Quiz" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
     </LinearLayout>
 

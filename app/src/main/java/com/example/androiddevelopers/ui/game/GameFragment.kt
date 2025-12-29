@@ -84,12 +84,31 @@ class GameFragment : Fragment(R.layout.fragment_game) {
         }
 
         // Registro
+        /*
         btnRegister.setOnClickListener {
             val email = emailApp.text.toString()
             val password = passApp.text.toString()
             if (email.isNotEmpty() && password.isNotEmpty()) {
                 auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
+                        Toast.makeText(requireContext(), "Cuenta creada", Toast.LENGTH_SHORT).show()
+                        updateUi()
+                    } else {
+                        Toast.makeText(requireContext(), "Error: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }*/
+        btnRegister.setOnClickListener {
+            val email = emailApp.text.toString()
+            val password = passApp.text.toString()
+            if (email.isNotEmpty() && password.isNotEmpty()) {
+                auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+
+                        val userRef = db.collection("users").document(email)
+                        userRef.set(hashMapOf("created" to com.google.firebase.Timestamp.now()))
+
                         Toast.makeText(requireContext(), "Cuenta creada", Toast.LENGTH_SHORT).show()
                         updateUi()
                     } else {
@@ -166,6 +185,7 @@ class GameFragment : Fragment(R.layout.fragment_game) {
     }
 
     // para guardar datos en Firebase
+    /*
     private fun saveScoreToFirebase() {
         val email = auth.currentUser?.email ?: return
         if (viewModel.score == 0) return
@@ -180,6 +200,24 @@ class GameFragment : Fragment(R.layout.fragment_game) {
             .collection("scores").add(scoreData)
             .addOnSuccessListener {
                 Toast.makeText(requireContext(), "Puntuación guardada en la nube", Toast.LENGTH_SHORT).show()
+            }
+    }*/
+    private fun saveScoreToFirebase() {
+        val email = auth.currentUser?.email ?: return
+        if (viewModel.score == 0) return
+
+        db.collection("users").document(email)
+            .set(hashMapOf("last_active" to com.google.firebase.Timestamp.now()), com.google.firebase.firestore.SetOptions.merge())
+
+        val scoreData = hashMapOf(
+            "puntuacion" to viewModel.score,
+            "fecha" to com.google.firebase.Timestamp.now()
+        )
+
+        db.collection("users").document(email)
+            .collection("scores").add(scoreData)
+            .addOnSuccessListener {
+                Toast.makeText(requireContext(), "Puntuación guardada", Toast.LENGTH_SHORT).show()
             }
     }
 /*
@@ -309,6 +347,7 @@ class GameFragment : Fragment(R.layout.fragment_game) {
         }
     }
 
+    /*
     private fun fetchRanking() {
         val rankingText = view?.findViewById<TextView>(R.id.text_ranking_list)
         rankingText?.text = "Calculando puntuaciones..."
@@ -341,6 +380,45 @@ class GameFragment : Fragment(R.layout.fragment_game) {
                     }
             }
         }
+    }*/
+    private fun fetchRanking() {
+        val rankingText = view?.findViewById<TextView>(R.id.text_ranking_list)
+        rankingText?.text = "Cargando..."
+
+        db.collection("users").get()
+            .addOnSuccessListener { userDocs ->
+                if (userDocs.isEmpty) {
+                    rankingText?.text = "No hay documentos en 'users'. Comprueba que no estén en itálica en la consola."
+                    return@addOnSuccessListener
+                }
+
+                val results = mutableListOf<Pair<String, Int>>()
+                var usersProcessed = 0
+                val totalUsers = userDocs.size()
+
+                for (userDoc in userDocs) {
+                    val email = userDoc.id
+                    db.collection("users").document(email).collection("scores").get()
+                        .addOnSuccessListener { scoreDocs ->
+                            var totalScore = 0
+                            for (scoreDoc in scoreDocs) {
+                                totalScore += (scoreDoc.getLong("puntuacion") ?: 0).toInt()
+                            }
+                            results.add(Pair(email, totalScore))
+                            usersProcessed++
+
+                            if (usersProcessed == totalUsers) {
+                                displayRanking(results)
+                            }
+                        }
+                        .addOnFailureListener {
+                            usersProcessed++
+                        }
+                }
+            }
+            .addOnFailureListener { e ->
+                rankingText?.text = "Error al acceder a la BD: ${e.message}"
+            }
     }
 
     private fun displayRanking(results: List<Pair<String, Int>>) {

@@ -84,21 +84,6 @@ class GameFragment : Fragment(R.layout.fragment_game) {
         }
 
         // Registro
-        /*
-        btnRegister.setOnClickListener {
-            val email = emailApp.text.toString()
-            val password = passApp.text.toString()
-            if (email.isNotEmpty() && password.isNotEmpty()) {
-                auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Toast.makeText(requireContext(), "Cuenta creada", Toast.LENGTH_SHORT).show()
-                        updateUi()
-                    } else {
-                        Toast.makeText(requireContext(), "Error: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        }*/
         btnRegister.setOnClickListener {
             val email = emailApp.text.toString()
             val password = passApp.text.toString()
@@ -185,23 +170,6 @@ class GameFragment : Fragment(R.layout.fragment_game) {
     }
 
     // para guardar datos en Firebase
-    /*
-    private fun saveScoreToFirebase() {
-        val email = auth.currentUser?.email ?: return
-        if (viewModel.score == 0) return
-
-        val scoreData = hashMapOf(
-            "puntuacion" to viewModel.score,
-            "fecha" to com.google.firebase.Timestamp.now()
-        )
-
-        // Guarda en: usuarios -> [email] -> partidas -> [id_aleatorio]
-        db.collection("users").document(email)
-            .collection("scores").add(scoreData)
-            .addOnSuccessListener {
-                Toast.makeText(requireContext(), "Puntuación guardada en la nube", Toast.LENGTH_SHORT).show()
-            }
-    }*/
     private fun saveScoreToFirebase() {
         val email = auth.currentUser?.email ?: return
         if (viewModel.score == 0) return
@@ -220,64 +188,7 @@ class GameFragment : Fragment(R.layout.fragment_game) {
                 Toast.makeText(requireContext(), "Puntuación guardada", Toast.LENGTH_SHORT).show()
             }
     }
-/*
-    private fun updateUi() {
-        val currentUser = auth.currentUser
 
-        // ESTADO 1: No logueado
-        if (currentUser == null) {
-            authContainer.visibility = View.VISIBLE
-            gameSelectionContainer.visibility = View.GONE
-            triviaContainer.visibility = View.GONE
-            return
-        }
-
-        // Si llegamos aquí, hay usuario. Ocultamos Auth.
-        authContainer.visibility = View.GONE
-
-        // ESTADO 2: Jugando
-        if (viewModel.isGameActive) {
-            gameSelectionContainer.visibility = View.GONE
-            triviaContainer.visibility = View.VISIBLE
-
-            val textScore = view?.findViewById<TextView>(R.id.text_score)
-            val textQuestion = view?.findViewById<TextView>(R.id.text_question)
-            val btnA = view?.findViewById<Button>(R.id.button_option_a)
-            val btnB = view?.findViewById<Button>(R.id.button_option_b)
-            val btnC = view?.findViewById<Button>(R.id.button_option_c)
-
-            textScore?.text = "Score: ${viewModel.score}"
-
-            viewModel.currentQuestion?.let { q ->
-                textQuestion?.text = q.questionText
-                btnA?.text = q.optionA
-                btnB?.text = q.optionB
-                btnC?.text = q.optionC
-                btnA?.visibility = View.VISIBLE
-                btnB?.visibility = View.VISIBLE
-                btnC?.visibility = View.VISIBLE
-            } ?: run {
-                textQuestion?.text = "Game Over! Score: ${viewModel.score}"
-                btnA?.visibility = View.GONE
-                btnB?.visibility = View.GONE
-                btnC?.visibility = View.GONE
-            }
-        }
-        // ESTADO 3: Menú de Selección
-        else {
-            gameSelectionContainer.visibility = View.VISIBLE
-            triviaContainer.visibility = View.GONE
-
-            val textLastScore = view?.findViewById<TextView>(R.id.text_last_score)
-            if (viewModel.score > 0) {
-                textLastScore?.text = "Last Score: ${viewModel.score}"
-                textLastScore?.visibility = View.VISIBLE
-            } else {
-                textLastScore?.visibility = View.GONE
-            }
-        }
-    }
-*/
     private fun updateUi() {
         val currentUser = auth.currentUser
 
@@ -347,40 +258,7 @@ class GameFragment : Fragment(R.layout.fragment_game) {
         }
     }
 
-    /*
-    private fun fetchRanking() {
-        val rankingText = view?.findViewById<TextView>(R.id.text_ranking_list)
-        rankingText?.text = "Calculando puntuaciones..."
 
-        db.collection("users").get().addOnSuccessListener { userDocs ->
-            val results = mutableListOf<Pair<String, Int>>()
-            var usersProcessed = 0
-
-            if (userDocs.isEmpty) {
-                rankingText?.text = "No hay usuarios registrados."
-                return@addOnSuccessListener
-            }
-
-            for (userDoc in userDocs) {
-                val email = userDoc.id
-                // consulta a la subcolección de puntuaciones de cada usuario
-                db.collection("users").document(email).collection("scores").get()
-                    .addOnSuccessListener { scoreDocs ->
-                        var totalScore = 0
-                        for (scoreDoc in scoreDocs) {
-                            totalScore += (scoreDoc.getLong("puntuacion") ?: 0).toInt()
-                        }
-                        results.add(Pair(email, totalScore))
-                        usersProcessed++
-
-                        // mostramos el ranking
-                        if (usersProcessed == userDocs.size()) {
-                            displayRanking(results)
-                        }
-                    }
-            }
-        }
-    }*/
     private fun fetchRanking() {
         val rankingText = view?.findViewById<TextView>(R.id.text_ranking_list)
         rankingText?.text = "Cargando..."

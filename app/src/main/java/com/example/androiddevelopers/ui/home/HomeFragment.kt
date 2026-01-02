@@ -22,6 +22,7 @@ import com.example.androiddevelopers.presentation.EventsViewModel
 import com.example.androiddevelopers.ui.events.EventType
 import com.example.androiddevelopers.ui.events.HistoricEventAdapter
 import com.example.androiddevelopers.ui.events.HistoricalPeriod
+import com.google.android.gms.drive.query.SortOrder
 import com.google.android.material.chip.Chip
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.tabs.TabLayout
@@ -61,6 +62,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     HistoricalPeriod.entries.find { it.name == name }
                 }.toSet()
                 viewModel.updatePeriods(selectedPeriods)
+            }
+
+            // Para ordenar de más reciente o de más antiguo
+            val orderName = bundle.getString("SORT_ORDER")
+            if (orderName != null) {
+                viewModel.updateSortOrder(EventsViewModel.SortOrder.valueOf(orderName))
             }
         }
     }

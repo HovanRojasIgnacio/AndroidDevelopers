@@ -49,7 +49,13 @@ class HistoricalFilterDialogFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        // Para recuperar el orden de los eventos que escogió el usuario.
+        val currentOrder = viewModel.currentSortOrder.value
+        if (currentOrder == EventsViewModel.SortOrder.NEWEST) {
+            binding.radioNewest.isChecked = true
+        } else {
+            binding.radioOldest.isChecked = true
+        }
         setupChips()
         setupListeners()
     }
@@ -82,11 +88,18 @@ class HistoricalFilterDialogFragment : BottomSheetDialogFragment() {
                 }
             }
 
-            Log.d(
-                "FilterDebug",
-                "Se envio la seleccion ${selectedPeriods.toString()}"
+            val selectedOrder = if (binding.radioNewest.isChecked) "NEWEST" else "OLDEST"
+
+            val periodNames = ArrayList(selectedPeriods.map { it.name })
+
+            setFragmentResult(
+                REQUEST_KEY_PERIODS,
+                bundleOf(
+                    BUNDLE_KEY_PERIODS to periodNames,
+                    "SORT_ORDER" to selectedOrder // <--- Aquí es donde se añade el orden
+                )
             )
-            sendResultToHomeFragment(selectedPeriods)
+
             dismiss()
         }
     }

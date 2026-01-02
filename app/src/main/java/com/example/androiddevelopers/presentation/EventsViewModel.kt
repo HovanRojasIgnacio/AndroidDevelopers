@@ -45,6 +45,11 @@ class EventsViewModel : ViewModel() {
     val activePeriods: StateFlow<Set<HistoricalPeriod>> =
         _activePeriods.asStateFlow()
 
+    // Para ordenar desde el más reciente o desde el más antiguo.
+    public enum class SortOrder { OLDEST, NEWEST }
+    private val _currentSortOrder = MutableStateFlow(SortOrder.OLDEST)
+    val currentSortOrder = _currentSortOrder.asStateFlow()
+
     init {
         setDate(_currentDate.value)
     }
@@ -86,29 +91,36 @@ class EventsViewModel : ViewModel() {
     }
 
     /* Aplica el filtro de época a una lista de eventos */
+    /* Aplica el filtro de época a una lista de eventos y luego los ordena */
     private fun filterEventsByPeriod(
         rawEvents: List<HistoricalEvent>,
         periods: Set<HistoricalPeriod>
     ) {
-        if (periods.isEmpty()) {
-            _events.value = rawEvents
-            return
-        }
+        val filteredList = if (periods.isEmpty()) {
+            rawEvents
+        } else {
+            rawEvents.filter { event ->
+                val rawYearString =
+                    event.year.split(" ").firstOrNull() ?: return@filter false
+                val isBC = event.year.contains("a. C.", ignoreCase = true)
+                val numericYear =
+                    rawYearString.filter { it.isDigit() }.toIntOrNull()
+                        ?: return@filter false
+                val eventYear = if (isBC) -numericYear else numericYear
 
-        val filteredEvents = rawEvents.filter { event ->
-            val rawYearString =
-                event.year.split(" ").firstOrNull() ?: return@filter false
-            val isBC = event.year.contains("a. C.", ignoreCase = true)
-            val numericYear =
-                rawYearString.filter { it.isDigit() }.toIntOrNull()
-                    ?: return@filter false
-            val eventYear = if (isBC) -numericYear else numericYear
-            periods.any { period ->
-                // ⭐️ El filtro ahora funciona con números positivos y negativos
-                eventYear >= period.startYear && eventYear <= period.endYear
+                periods.any { period ->
+                    eventYear >= period.startYear && eventYear <= period.endYear
+                }
             }
         }
-        _events.value = filteredEvents
+
+        val sortedEvents = if (_currentSortOrder.value == SortOrder.OLDEST) {
+            filteredList.sortedBy { parseYear(it.year) ?: 0 }
+        } else {
+            filteredList.sortedByDescending { parseYear(it.year) ?: 0 }
+        }
+
+        _events.value = sortedEvents
     }
 
     fun getFormattedDateComponents(calendar: Calendar): Pair<String, String> {
@@ -134,6 +146,21 @@ class EventsViewModel : ViewModel() {
             _currentEventType.value = eventType
             loadEvents()
         }
+    }
+
+    /**
+     * Cambia el orden de los eventos o de más antiguo a más reciente o al revés
+     */
+    fun updateSortOrder(order: SortOrder) {
+        _currentSortOrder.value = order
+        filterEventsByPeriod(_rawEventsFromApi.value, _activePeriods.value)
+    }
+
+    private fun parseYear(yearString: String): Int? {
+        val rawYearString = yearString.split(" ").firstOrNull() ?: return null
+        val isBC = yearString.contains("a. C.", ignoreCase = true)
+        val numericYear = rawYearString.filter { it.isDigit() }.toIntOrNull() ?: return null
+        return if (isBC) -numericYear else numericYear
     }
 
     private fun getDefaultEvents(): List<HistoricalEvent> {

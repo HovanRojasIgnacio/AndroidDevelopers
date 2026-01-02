@@ -29,6 +29,36 @@
 
     </ScrollView>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Orden cronológico"
+        android:textSize="16dp"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/text_primary" />
+
+    <RadioGroup
+        android:id="@+id/radio_group_order"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <RadioButton
+            android:id="@+id/radio_oldest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Más antiguo"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/radio_newest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Más reciente"
+            android:layout_marginStart="16dp" />
+    </RadioGroup>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

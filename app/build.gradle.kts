@@ -65,6 +65,7 @@ dependencies {
     implementation("io.coil-kt:coil-svg:2.6.0")
     implementation(libs.androidx.camera.camera2.pipe)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation(libs.play.services.drive)
 
 
     testImplementation(libs.junit)

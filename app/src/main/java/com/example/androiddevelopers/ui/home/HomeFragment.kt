@@ -227,17 +227,24 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.events.collectLatest { events ->
                 homeEventsAdapter.updateList(events)
-                homeRecyclerView.isVisible = events.isNotEmpty()
-                if (events.isEmpty()) {
-                    showStatusMessage("No se han encontrado eventos para este día y filtro.")
+                if (viewModel.isLoading.value == false) {
+                    homeRecyclerView.isVisible = events.isNotEmpty()
+                    if (events.isEmpty()) {
+                        showStatusMessage("No se han encontrado eventos para este día y filtro.")
+                    }
                 }
             }
         }
-
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.isLoading.collect { isLoading ->
-                if (isLoading && viewModel.events.value.isEmpty()) {
-                    showStatusMessage("No se han encontrado eventos para este día y filtro.")
+                binding.loadingProgressBar.isVisible = isLoading
+
+                if (isLoading) {
+                    homeRecyclerView.isVisible = false
+                    homeEventsAdapter.updateList(emptyList())
+                } else {
+                    val hasEvents = viewModel.events.value.isNotEmpty()
+                    homeRecyclerView.isVisible = hasEvents
                 }
             }
         }
